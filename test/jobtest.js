@@ -1,4 +1,4 @@
-var iq=require('../../srvControllers/iqTest')
+var iq=require('../srvControllers/iqTest')
 var exec=iq.exec
 var expect=iq.expect
 var should=iq.should

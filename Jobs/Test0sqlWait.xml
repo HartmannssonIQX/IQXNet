@@ -1,0 +1,8 @@
+<Job>
+<Message text="Waiting"/>
+<SQLExec>update ag3 set t1=current timestamp where id=1</SQLExec>
+<Wait seconds='1'/>
+<SQLExec>update ag3 set t2=current timestamp where id=1</SQLExec>
+<SetVariable name='ms' sql='select datediff(millisecond,t1,t2) from ag3 where id=1'/>
+<Write>{ms}</Write>
+</Job>
