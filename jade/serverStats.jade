@@ -1,0 +1,15 @@
+include ./standard-blocks.jade
+
+.container-fluid
+  table.table.table-striped
+    thead
+      tr
+        th Item
+        th Value
+    tbody
+      tr(ng-repeat='stat in theRecords')
+        td {{ stat.Name }}
+        td {{ stat.Value }}
+
+  .col-xs-12.text-danger(ng-if='formError') {{ formError }}
+  
