@@ -1,8 +1,10 @@
 <Job>
 <Message text="Waiting"/>
-<SQLExec>update ag3 set t1=current timestamp where id=1</SQLExec>
+<SQLExec ignoreerror="YES">create table testJobWait (id integer primary key,t1 timestamp,t2 timestamp)</SQLExec>
+<SQLExec ignoreerror="YES">insert into testJobWait (id) values (1)</SQLExec>
+<SQLExec>update testJobWait set t1=current timestamp where id=1</SQLExec>
 <Wait seconds='1'/>
-<SQLExec>update ag3 set t2=current timestamp where id=1</SQLExec>
-<SetVariable name='ms' sql='select datediff(millisecond,t1,t2) from ag3 where id=1'/>
+<SQLExec>update testJobWait set t2=current timestamp where id=1</SQLExec>
+<SetVariable name='ms' sql='select datediff(millisecond,t1,t2) from testJobWait where id=1'/>
 <Write>{ms}</Write>
 </Job>
