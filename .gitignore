@@ -8,6 +8,7 @@ daemon
 
 iqxWeb.zip
 iqxWebJobs.xml
+iqxWebNetProcs.xml
 
 # Rejections
 *.rej
