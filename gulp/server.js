@@ -5,6 +5,6 @@ gulp.task('dev:server', function () {
   nodemon({
     script: 'server.js',
     ext:    'js',
-    ignore: ['cliControllers*', 'gulp*', 'assets*', 'dump*', 'test*']
+    ignore: ['cliControllers/**/*', 'assets/**/*', 'dump/**/*', 'test/**/*']
   })
 })

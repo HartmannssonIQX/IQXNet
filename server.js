@@ -4,7 +4,7 @@ var logger     = require('morgan')
 var https = require('https')
 var http = require('http')
 var fs = require('fs')
-var config=require('./srvControllers/config')
+var config=require('./config')
 var app = express()
 
 app.use(bodyParser.json())

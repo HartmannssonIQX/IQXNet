@@ -1,6 +1,8 @@
 IQXWeb Installation
 
 1. Install and configure IQXHub. IQXHub is configured by IQX.ini - sample settings should be available, and from the configuration settings in IQX - Maintenance - IQXNet Setup. It can run either as a service or as a visible console (they use the same config settings and do the same job). Ideally use the visual console until everything is running, since it is easier to see what is going on, and then use the service for live use.
+The service is installed by running
+  IQXHubService /install
 
 2. Install NodeJS from https://nodejs.org
 
@@ -10,6 +12,10 @@ IQXWeb Installation
 
 5. Run install.bat. This will use npm - the Node Package Manager - to install required library code.
 
-6. Like IQXHub, IQXWeb can run either as a service or as a visible console. To install the service run 
-node serviceInstall.js
-then manage it like any service from the Windows Service console. For the visible version run IQXWeb.bat
+6. Copy config_sample.js to config.js and edit the settings appropriately.
+
+7. IQXWeb can also run either as a service or as a visible console. 
+To install the service run 
+  node serviceInstall.js
+then manage it like any service from the Windows Service console. 
+For the visible version run IQXWeb.bat

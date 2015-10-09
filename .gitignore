@@ -6,9 +6,12 @@ views
 node_modules
 daemon
 
+config.js
 iqxWeb.zip
 iqxWebJobs.xml
 iqxWebNetProcs.xml
+
+*.tmp*
 
 # Rejections
 *.rej

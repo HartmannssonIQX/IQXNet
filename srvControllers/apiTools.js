@@ -1,6 +1,6 @@
 var jwt=require('jwt-simple')
 var needle = require('needle');
-var config=require('./config')
+var config=require('../config')
 var xml2js = require('xml2js')
 var parser = new xml2js.Parser({trim:true,explicitArray:false,attrkey:'attrs',charkey:'message'});
 var Q = require('q')

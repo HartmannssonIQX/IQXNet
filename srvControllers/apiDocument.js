@@ -1,5 +1,5 @@
 var router=require('express').Router()
-var config=require('./config')
+var config=require('../config')
 var apiTools=require('./apiTools')
 var upload  = require('multer')()  // config settings here
 var _ = require('lodash')

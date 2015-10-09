@@ -14,13 +14,13 @@ angular.module('app')
     }
     
   svc.params={
-    browserTitle:'IQXWeb',
-    headerName:'IQXWeb',
-    footerText:'Copyright IQX Limited 2015',
-    logoFile:'sitelogo.png',
-    logoAlt:'IQXWeb'
+    browserTitle:'',
+    headerName:'',
+    footerText:'',
+    logoFile:'',
+    logoAlt:''
     }
-  $http.get('/params.json')
+  $http.get('/api/auth/params')
     .then(function(res) {
       svc.params=angular.extend(svc.params,res.data)
     })

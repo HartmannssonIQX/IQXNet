@@ -1,7 +1,7 @@
 var router=require('express').Router()
 var jwt=require('jwt-simple')
 var _ = require('lodash')
-var config=require('./config')
+var config=require('../config')
 var apiTools=require('./apiTools')
 
 // The API for dealing with new user registrations

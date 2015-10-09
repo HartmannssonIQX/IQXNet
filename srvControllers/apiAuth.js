@@ -1,9 +1,9 @@
 var router=require('express').Router()
 var jwt=require('jwt-simple')
-var config=require('./config')
+var config=require('../config')
 var apiTools=require('./apiTools')
 
-// The Authorisation API
+// The Authorisation and Initialization API
 
 router.post('/login',function (req,res,next) {
   apiTools.IQXCall('get','IQXAuthenticate',{},req,res,{username: req.body.username, password: req.body.password},true) 
@@ -32,6 +32,10 @@ router.post('/changepassword',function (req,res,next) {
     res.send(result)
     })
 })  
+
+router.get('/params',function (req,res,next) {
+  res.send(config.clientParams)
+})
 
 module.exports=router
 
