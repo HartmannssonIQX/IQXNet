@@ -205,7 +205,7 @@ router.get('/makeJob', function (req,res,next) {
   try {
   var newline="\r\n",cnt=0,fileContents,procName
   var files=fs.readdirSync('./sql/')
-  var fd=fs.openSync('./sql/iqxWebJobs.xml','w')
+  var fd=fs.openSync('./jobs/iqxWebNetProcs.xml','w')
   fs.writeSync(fd,'<?xml version="1.0" encoding="UTF-8"?>'+newline)
   fs.writeSync(fd,'<Job title="Net Database Procedure Import">'+newline)
   fs.writeSync(fd,'<IfYesDialog text="This job will update the Net database procedures. Ok to proceed?">'+newline)
