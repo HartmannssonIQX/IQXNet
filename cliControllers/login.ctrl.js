@@ -6,6 +6,7 @@ angular.module('app')
     if (!password) {return ($scope.loginerr='Missing password')}
     $http.post('/api/auth/login', {username:username, password:password})  
       .then(function (res) {
+        ApiSvc.CheckIQXResult(res.data)
         ApplicationSvc.setLoggedIn(res.data)
         var p=ApplicationSvc.postLoginRoute  // Navigate to wherever was last requested in the un-loggedin state (default=/)
         ApplicationSvc.postLoginRoute='/'   // Reset the default
