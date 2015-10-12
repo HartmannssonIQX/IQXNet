@@ -37,10 +37,11 @@ describe('IQXNet Test', function(){
   it('x-auth checks', function(){
     return iq.all([
       expect(exec('IQXCall/NetTestLoop','',{pReturn:'0:~Success'},'status')).to.eventually.equal(401),  // No credentials
-      expect(exec('IQXCall/NetTestLoop','',{"x-auth":'test.user.candidate!'+iq.password,pReturn:'0:~Success'})).to.eventually.to.be.fulfilled
+      expect(exec('IQXCall/NetTestLoop','',{"x-auth":'test.user.candidate!'+iq.password,pReturn:'0:~Success'})).to.be.fulfilled
       ])
     })
     
+   
   })
   
 

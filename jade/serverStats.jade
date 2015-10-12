@@ -11,5 +11,7 @@ include ./standard-blocks.jade
         td {{ stat.Name }}
         td {{ stat.Value }}
 
-  .col-xs-12.text-danger(ng-if='formError') {{ formError }}
+  +FormError
+  +FormButtonGroup
+    +FormButton('Refresh',{'ng-click':'fetch()'})
   
