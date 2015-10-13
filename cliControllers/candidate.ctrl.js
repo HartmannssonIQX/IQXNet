@@ -9,6 +9,7 @@ angular.module('app')
       questionnaire:{
         tagTarget:'tags',
         tagLocation:'P',
+        //displayGroup:'CANDTSCOMP',
         postVar:'qanswers'
         }
       })

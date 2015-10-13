@@ -9,6 +9,7 @@ angular.module('app')
       displayGroup:'',
       id:'',
       notLoggedIn:false,
+      api:'NetQuestionnaire2',
       postVar:''
       },options)
     }
@@ -142,7 +143,7 @@ angular.module('app')
   svc.fetch=function(scope,options) {
     options = options || scope.QuestionnaireSvcOptions 
     if (!options.tagTarget || !options.tagLocation) {return $q.reject(scope.formError='Invalid QuestionnaireSvcOptions')}
-    var api='callresult'+(options.notLoggedIn?'_':'')+'/NetQuestionnaire?ptaglocation='+options.tagLocation
+    var api='callresult'+(options.notLoggedIn?'_':'')+'/'+options.api+'?ptaglocation='+options.tagLocation
     scope.rawQ=[]  // rawQ is the fetch target and is the intermediate dataset in building the tag structure. First ensure that it is empty.
     scope[options.tagTarget]=[]  // Also empty the tag structure
     var newTags=[]
