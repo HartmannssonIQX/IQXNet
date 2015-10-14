@@ -109,5 +109,14 @@ apiTools.IQXFailure = function(sMessage) {
          }
   }
 
+apiTools.IQXSuccess = function(data) {
+  return {IQXResult:
+           {
+            attrs:{success:'1'},
+            Row:data
+           }
+         }
+  }
+
 module.exports=apiTools
 

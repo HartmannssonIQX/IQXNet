@@ -27,10 +27,10 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
             li(ng-if="userHasRight('DIARY')"): a(href='/#/canddiary') Diary
             li(ng-if="isSwitchedOn('JOBSEARCH')"): a(href='/#/jobsearch') Job Search            
             li(ng-if="userHasRight('DOCCANDDOWNLOAD')"): a(href='/#/canddocuments') Documents
-            li(ng-if="userHasRight('TESTONLY')"): a(href='/#/test') Test
           ul.nav.navbar-nav(ng-if="userClass()=='OWNER'")
             li: a(href='/#/serverstats') Stats
             li(ng-if="userHasRight('APIDESIGN') && isSwitchedOn('APIDESIGN')"): a(href='/#/apiprocs') API
+            li(ng-if="userHasRight('TESTONLY')"): a(href='/#/test') Test
           ul.nav.navbar-nav.navbar-right(ng-if='isLoggedIn()')
             li: a(href='/#/login', ng-click='logout()') {{ userName() }} - Log out
     .mynavspacer

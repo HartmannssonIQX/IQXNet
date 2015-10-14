@@ -8,6 +8,7 @@ var apiTools=require('./apiTools')
 var _ = require('lodash')
 var fs = require('fs')
 var process = require('child_process')
+var Q = require('q')
 
 function xClean(s) {
   s=_.trim(s)
@@ -235,6 +236,38 @@ router.get('/makeJob', function (req,res,next) {
   }    
   })
 
+function getMS(){
+  var d = new Date()
+  return d.getTime()
+  }
+  
+router.get('/stressConcurrent', function (req,res,next) {
+  var cnt=100
+  var ms=getMS()
+  var qCall=function() { return apiTools.IQXCall('get','IQXCallResult_/NetQuestionnaire',{ptaglocation:'P'},req,res,{},true) }
+  var promArr=[]
+  for (var i=0;i<cnt;i++) {promArr.push(qCall())}
+  Q.all(promArr)  // Wait for an array of concurrent promises
+  .then(function(result) {
+    res.send(apiTools.IQXSuccess({type:'Concurrent',iterations:cnt,ms:getMS()-ms}))
+    })
+  })
+
+router.get('/stressConsecutive', function (req,res,next) {
+  var cnt=100,i=0
+  var ms=getMS()
+  var qCall=function() { // Use recursive calls to chain consecutive promises
+    return apiTools.IQXCall('get','IQXCallResult_/NetQuestionnaire',{ptaglocation:'P'},req,res,{},true)
+      .then(function() {
+        i++
+        if(i<cnt) {return qCall()}  // Recursive call unless cnt has been reached
+        })
+      }
+  qCall()
+  .then(function(result) {
+    res.send(apiTools.IQXSuccess({type:'Consecutive',iterations:cnt,ms:getMS()-ms}))
+    })
+  })
 
 module.exports=router
 

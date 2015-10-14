@@ -1,4 +1,15 @@
 .container
   .jumbotron
-    h1 Test
-    button.btn.btn-success.btn-default(type='button', ng-click='doTest()') Do Test
+    h3 Stress Test
+    button.btn.btn-success.btn-default(type='button', ng-click="doTest('Consecutive')") Consecutive
+    button.btn.btn-success.btn-default(type='button', ng-click="doTest('Concurrent')") Concurrent
+    h4.text-success {{testResult.working}}
+    h4 
+      | Type: 
+      span.text-primary {{testResult.type}}
+    h4 
+      | Iterations: 
+      span.text-primary {{testResult.iterations}}
+    h4 
+      | Milliseconds: 
+      span.text-primary {{testResult.ms}}
