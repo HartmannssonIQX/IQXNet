@@ -8,11 +8,29 @@ include ./standard-blocks.jade
     .col-md-4
       a.btn.btn-primary.pull-right(onclick="window.print();return false;", href="javascript:window.print()") Print
   br
-  +Form
+  +MiniForm({"ng-submit":'update()'})
+    .mybottomspacer
+    .myerrorspacer(ng-if='formError')
+    footer.navbar-default.navbar-fixed-bottom
+      .container
+        .text-danger(ng-if='formError') {{ formError }}
+        .btn-group.btn-group-justified(role='group', ng-show='!isEditing && !autoEdit')
+          .btn-group(role='group')
+            button.btn.btn-success.btn-default(type='button', ng-click='setEditing(true)') Edit
+          .btn-group(role='group')
+            button.btn.btn-success.btn-default(type='button', ng-click='fetch()') Refresh
+        .btn-group.btn-group-justified(role='group', ng-show='isEditing')
+          .btn-group(role='group')
+            button.btn.btn-success(type='submit', ng-click="setSaveOrSubmit(true);") {{ 'Save &amp; Submit' }}
+          .btn-group(role='group')
+            button.btn.btn-warning(type='submit', name='saveonly', ng-click="setSaveOrSubmit(false);") {{ 'Save Only' }}
+
     +FormField('text','Position','Position',{'ng-disabled':true, 'readonly':true})
     +FormField('text','PositionNotes','Notes',{'ng-disabled':true, 'readonly':true})
     iqx-questionnaire(questions='tags')
     +FormCheckbox('ReferenceConfirmationRequired','Would you like an email copy of this reference?',{})
+    .mybottomspacer
+    .mybottomspacer
 
 .container(ng-if='formError && !showForm && !isSubmitted')
   .alert.alert-danger&attributes({'role':'alert'})
