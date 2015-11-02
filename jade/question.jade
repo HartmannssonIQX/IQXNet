@@ -1,4 +1,4 @@
-.form-group
+.form-group(ng-class="{'input-required':tag.required}")
   label.control-label.col-sm-2(for="{{tag.id}}") {{tag.description}}
   .col-sm-10(ng-switch="tag.tagtype")
     input.form-control(ng-switch-when="T", type="text", id="{{tag.id}}", name="{{tag.id}}", ng-disabled='!isEditing', ng-model='tag.value', ng-required='tag.required')
