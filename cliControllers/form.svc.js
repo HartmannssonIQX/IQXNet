@@ -101,7 +101,7 @@ angular.module('app')
       if (!scope.isEditing) {return $q.when()}  // Returns a resolved promise so that it can be 'then'ed
       if (!scope.FormSvcOptions.saveAPI) {return $q.reject(scope.formError='No saveAPI in form service options')}
       svc.setSubmitted(scope,true)
-      if (scope.theForm.$valid) {
+      if (scope.theForm.$valid || !bSaveOnly) {
         var changes=false
         var postvars={}
         angular.forEach(scope.theRecord, function (value,key) {

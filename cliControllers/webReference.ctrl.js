@@ -6,6 +6,11 @@ angular.module('app')
   $scope.showForm=false
   $scope.isSubmitted=false
   $scope.postCompletedForm=false
+  $scope.saveAndSubmit=true
+
+  $scope.setSaveOrSubmit=function(v){
+    $scope.saveAndSubmit=v
+  }
 
   $scope.fetchDepartmentID=function(){ // Returns the department based on the URLRefCode
     if (!$scope.refCode) {return $q.reject($scope.formError='Missing URLReferenceCode')}
@@ -17,24 +22,21 @@ angular.module('app')
   }
 
   $scope.myUpdate=function () {  // Over-ride the default update() called by the Save & Submit button
-    if (!$scope.theForm.$valid) {return}
     FormSvc.setSubmitted($scope,true)
-    ApplicationSvc.messageDialog ('Save & Submit?', 'You can save the form and come back to it at a later date or you can Save & Submit the form (you wont be able to edit it after this)', 'Save & Submit', 'Save ONLY', true)
-    .then(function(res){   // res will be true if submitted/completed, false if save only
-        $scope.postCompletedForm=res
-        $scope.theRecord.Completed=res ? 1 : 0;
-        return FormSvc.update($scope,res)  // Do not do the fetch if submitted
-          .then(function() {
-            $scope.showForm=!res
-            $scope.isCompleted=res
-            if (!res) ApplicationSvc.messageDialog ('Save Successful', 'The reference has been saved, you can now return to this form at a later date using the emailed URL.', 'OK', '')
-          })
+    // if (!$scope.theForm.$valid || !$scope.saveAndSubmit == false) {return}
+      $scope.postCompletedForm=$scope.saveAndSubmit
+      $scope.theRecord.Completed=$scope.saveAndSubmit ? 1 : 0;
+      return FormSvc.update($scope,$scope.saveAndSubmit)  // Do not do the fetch if submitted
+      .then(function() {
+        $scope.showForm=!$scope.saveAndSubmit
+        $scope.isCompleted=$scope.saveAndSubmit
+        if (!$scope.saveAndSubmit) ApplicationSvc.messageDialog ('Save Successful', 'The reference has been saved, Please bookmark this page or click on the link provided in the email to return to this form.', 'OK', '')
       })
     }
   
   $scope.fetchDepartmentID() // Get the department ID so it can fetch the correct questions
   .then(function() {
-    if(!$scope.preRef.DepartmentID) {return $q.reject($scope.formError='Invalid URLReferenceCode')}
+    if(!$scope.preRef.DepartmentID) {return $q.reject($scope.formError='Sorry, The Reference Request you are looking for has already been completed or has expired.')}
 
     FormSvc.setOptions($scope,{
       fetchAPI:'callresult_/NetReference?pReferenceRequestCode='+$scope.refCode,
@@ -58,6 +60,4 @@ angular.module('app')
   .then(function(){
     $scope.showForm=true
   })  
-
-  $scope.saveButtonCaption='Save & Submit'
 })
