@@ -23,7 +23,7 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
         .navbar-collapse(ng-class='{collapse: isCollapsed}', ng-init='isCollapsed = true', ng-click='isCollapsed = true') 
           ul.nav.navbar-nav(ng-if="userClass()=='CANDIDATE'")
             li: a(href='/#/canddetails') Details
-            li: a(href='/#/timesheets') Timesheets
+            li: a(href='/#/provtimesheets') Timesheets
             li(ng-if="userHasRight('DIARY')"): a(href='/#/canddiary') Diary
             li(ng-if="isSwitchedOn('JOBSEARCH')"): a(href='/#/jobsearch') Job Search            
             li(ng-if="userHasRight('DOCCANDDOWNLOAD')"): a(href='/#/canddocuments') Documents

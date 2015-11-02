@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('ProvTSCtrl', function ($scope, $routeParams, $q, FormSvc) {
+.controller('ProvTimesheetCtrl', function ($scope, $routeParams, $q, FormSvc, ApplicationSvc) {
   FormSvc.setOptions($scope)
   $scope.ProvTSID=$routeParams.id  
   
@@ -10,12 +10,14 @@ angular.module('app')
   
   $scope.fetchTimesheetShifts=function() {
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheetshifts?pTempProvTimesheetID='+$scope.ProvTSID, 
-      fetchTarget:'timesheetShifts',multiRow:true,dateFields:['weekenddate','shiftdate'],booleanFields:['tick']})
+      fetchTarget:'timesheetShifts',multiRow:true,dateFields:['weekenddate','shiftdate'],timeFields:['timefrom','timeto'],
+      booleanFields:['tick']})
     }
   
   $scope.fetchTimesheetTimes=function() {
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheettimes?pTempProvTimesheetID='+$scope.ProvTSID, 
-      fetchTarget:'timesheetTimes',multiRow:true,dateFields:['weekstartdate','shiftdate'],booleanFields:['dayticked']})
+      fetchTarget:'timesheetTimes',multiRow:true,dateFields:['weekstartdate','shiftdate'],timeFields:['timefrom'],
+      booleanFields:['dayticked']})
     }
   
   $scope.fetchTimesheetRates=function() {
@@ -44,6 +46,33 @@ angular.module('app')
         }
       })
     }
+    
+  $scope.editShift=function(sh) {
+    $scope.bEditing=true
+    $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits
+    sh.bEditShift=true
+  }
+  
+  $scope.saveShift=function(sh) {
+    // save code here
+    $scope.bEditing=false
+    sh.bEditShift=false
+  }
+  
+  $scope.unEditShift=function(sh) {
+    $scope.bEditing=false
+    angular.copy($scope.safeShift,sh)  // Replace the contents of sh with the safe copy
+    sh.bEditShift=false
+  }
+  
+  $scope.shiftLength=function(sh) {
+    var start=moment().hours(sh.timefrom.getHours()).minutes(sh.timefrom.getMinutes())
+    var end=moment().hours(sh.timeto.getHours()).minutes(sh.timeto.getMinutes())
+    var len=end.diff(start,'hours',true)
+    if (len<=0) {len=24.0-len}
+    if (sh.breakminutes) {len=len-sh.breakminutes/60}
+    return len
+  }
     
   $scope.calc=function() {
     $scope.timesheetRates=[]

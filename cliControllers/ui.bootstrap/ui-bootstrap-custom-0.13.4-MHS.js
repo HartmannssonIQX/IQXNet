@@ -4,7 +4,8 @@
 
  * Version: 0.13.4 - 2015-09-03
  * License: MIT
- * Modified by MHS to handle uk dates and short years better
+ ******* Modified by MHS to handle uk dates and short years better
+ ******* NB this just replaces the dateParser service - the rest of the ui.bootstrap is standard
  */
 //angular.module("ui.bootstrap", ["ui.bootstrap.dateparser"]);
 angular.module('ui.bootstrap.dateparser', [])
@@ -16,6 +17,7 @@ angular.module('ui.bootstrap.dateparser', [])
   this.parsers = {};
 
   function shortYearAdjust(yy,refDate,epochAge) {
+    // MHS epoch handling function
       yy=+yy // Force to numeric
       if (yy>100) {return yy}  // Nothing to do
       refDate=refDate || new Date()  // Based on today
@@ -26,7 +28,8 @@ angular.module('ui.bootstrap.dateparser', [])
       while (yyyy > refy+100-epochAge) {yyyy-=100}
       return yyyy
       }
-
+  // MHS: the regexes are altered to stop being dogmatic about number of digits in each section
+  // because failure causes fallback to default date parsing - US format
   var formatCodeToRegex = {
     'yyyy': {
       regex: '\\d{1,4}',

@@ -1,18 +1,42 @@
 angular.module('app')
 .service('ApiSvc', function ($http, $filter, $q, ApplicationSvc) {
-	var svc=this
+  var svc=this
 
-	svc.StringToDate=function (sDate) {
-	   if (sDate) {
-	    return new Date(sDate.substr(10,4),sDate.substr(7,2)-1,sDate.substr(4,2))
-		 } else {
-			return null
-		 }
-		}
+  svc.StringToDate=function (sDate) {
+     if (sDate) { // Looking for UK format with 4 digit year and any separator (may be prefixed by alpha day of week)
+       var ar=sDate.match(/(\d+).(\d+).(\d{4})/)
+       if (ar.length<4) {return null}
+       return new Date(ar[3],ar[2]-1,ar[1])
+       //return new Date(sDate.substr(10,4),sDate.substr(7,2)-1,sDate.substr(4,2))
+     } else {
+      return null
+     }
+    }
+    
+  svc.StringToTime=function (sTime) {
+     if (sTime) {
+       var ar=sTime.match(/^(\d{1,2})[:](\d{2})/)
+       if (ar.length<3) {return null}
+       var d=new Date()
+       d.setHours(ar[1])
+       d.setMinutes(ar[2])
+       return d
+     } else {
+       return null
+     }
+    }
+    
+  svc.TimeToString=function(dTime) {
+    return $filter('date')(dTime, 'HH:mm')  // HH for 24 hour
+    }
+    
+  svc.DateToString=function(dDate) {
+    return $filter('date')(dDate, 'dd/MM/yyyy')
+    }
     
   svc.SafeJSONValue=function (val) {
      if (angular.isDate(val)) {
-      return $filter('date')(val, 'dd/MM/yyyy')
+      return svc.DateToString(val)
      } else if (typeof val == 'boolean') {
       return (val ? 1 : 0)
      } else {
@@ -58,17 +82,17 @@ angular.module('app')
     }  
     }
      
-	svc.fetch=function (scope,options) {
+  svc.fetch=function (scope,options) {
     var theResult, doFetch
     if (!options.fetchAPI) {return $q.reject(scope.formError='No fetchAPI in options')}
-		if (!ApplicationSvc.isLoggedIn && !options.notLoggedIn) {return $q.reject(scope.formError='Not logged in')}
+    if (!ApplicationSvc.isLoggedIn && !options.notLoggedIn) {return $q.reject(scope.formError='Not logged in')}
     if (angular.isString(options.fetchAPI)) {
       doFetch=$http.get('/api/'+extendedFetchAPI(scope,options))
     } else {
       doFetch=svc.IQXResultSucceeded(options.fetchAPI)
     }
-		return doFetch  
-			.then(function (res) {
+    return doFetch  
+      .then(function (res) {
         svc.CheckIQXResult(res.data)  // Checks the IQXResult construct and, if failed, throws exception with the message
         if (options.multiRow) {
           if (res.data.IQXResult.Row == undefined) {
@@ -102,6 +126,17 @@ angular.module('app')
             theResult[value]=svc.StringToDate(theResult[value])
             }
           })
+        angular.forEach(options.timeFields, function (value) {
+          if (options.multiRow) {
+            angular.forEach(theResult, function (row) {
+              if (row[value] != undefined) {
+                row[value]=svc.StringToTime(row[value])
+                }
+              })
+          } else if (theResult[value] != undefined) {
+            theResult[value]=svc.StringToTime(theResult[value])
+            }
+          })
         angular.forEach(options.booleanFields, function (value) {
           if (options.multiRow) {
             angular.forEach(theResult, function (row) {
@@ -120,14 +155,14 @@ angular.module('app')
         } else {
           scope.theRecord=theResult
           }
-				})
-			.catch(function (err) {
-				return $q.reject(scope.formError=svc.ExtractError(err))
-				})
-		}
+        })
+      .catch(function (err) {
+        return $q.reject(scope.formError=svc.ExtractError(err))
+        })
+    }
     
   svc.exec=function(scope,api,postObject,notLoggedIn) {
-		if (!(ApplicationSvc.isLoggedIn || notLoggedIn)) {return $q.reject(scope.formError='Not logged in')}
+    if (!(ApplicationSvc.isLoggedIn || notLoggedIn)) {return $q.reject(scope.formError='Not logged in')}
     var postvars={}
     angular.forEach(postObject, function (value,key) {
       postvars[key]=svc.SafeJSONValue(value)

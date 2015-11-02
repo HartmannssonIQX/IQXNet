@@ -1,3 +1,5 @@
+include ./table-blocks.jade
+
 .container-fluid
   h3 Timesheet {{ timesheet.serialnumber }} 
   h4 {{ timesheet.position }} at {{ timesheet.companyname }}
@@ -14,20 +16,27 @@
         th
         th
     tbody
-      tr(ng-repeat='shift in timesheetShifts')
-        td(ng-if='!bEditShift') {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
-        td(ng-if='bEditShift') 
-          input(type='date',ng-model='shift.shiftdate')
-        td {{ shift.timefrom }}
-        td {{ shift.timeto }}
+      tr(ng-repeat-start='shift in timesheetShifts')
+        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
+        td {{ shift.timefrom  | date:'HH:mm' }}
+        td {{ shift.timeto | date:'HH:mm' }}
         td {{ shift.breakminutes }}
-        td {{ shift.shiftduration | number:2 }}
+        td {{ shiftLength(shift) | number:2 }}
         td
           input(type='checkbox',ng-model='shift.tick')
         td
-          button.btn.btn-sm.btn-primary(ng-click='bEditShift=!bEditShift') 
+          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='editShift(shift)') 
             | Edit&nbsp;
             span.glyphicon.glyphicon-edit
+      tr(ng-repeat-end,ng-if='shift.bEditShift')
+        td(colspan=7)
+          +InlineDatePopup('shift','shiftdate',{})
+          p
+            +InlineTimePopup('shift','timefrom',{},'From')
+            +InlineTimePopup('shift','timeto',{},'to')
+          p
+            button.btn.btn-sm.btn-primary(ng-click='saveShift(shift)') Ok
+            button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel
           
   button.btn.btn-success.btn-default(ng-click='calc()') Calculate
   
@@ -40,7 +49,7 @@
     tbody
       tr(ng-repeat='shift in timesheetTimes')
         td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
-        td {{ shift.timefrom }}
+        td {{ shift.timefrom | date:'HH:mm' }}
         td {{ shift.hours | number:2 }}
         
   table.table.table-striped(ng-show='completedTimesheet')
