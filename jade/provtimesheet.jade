@@ -5,68 +5,111 @@ include ./table-blocks.jade
   h4 {{ timesheet.position }} at {{ timesheet.companyname }}
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}
   
-  table.table.table-striped(ng-show='shiftTimesheet')
+  table.table.table-striped.table-condensed(ng-show='shiftTimesheet')
     thead
       tr
         th Shift Date
         th From
         th To
-        th Break
-        th Hours
+        th.textright Break
+        th.textright Hours
         th
         th
     tbody
-      tr(ng-repeat-start='shift in timesheetShifts')
+      tr(ng-repeat-start='shift in timesheetShifts',ng-if='!shift.bEditShift')
         td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
         td {{ shift.timefrom  | date:'HH:mm' }}
         td {{ shift.timeto | date:'HH:mm' }}
-        td {{ shift.breakminutes }}
-        td {{ shiftLength(shift) | number:2 }}
+        td.textright {{ shift.breakminutes }}
+        td.textright {{ shiftLength(shift) | number:2 }}
         td
-          input(type='checkbox',ng-model='shift.tick')
+          input(type='checkbox',ng-model='shift.tick',ng-click='uncompleteTimesheet()')
+        td
+          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='editShift(shift)') 
+            | Edit&nbsp;
+            span.glyphicon.glyphicon-edit
+          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='copyShift(shift)') 
+            | Copy&nbsp;
+            span.glyphicon.glyphicon-duplicate
+      tr(ng-repeat-end,ng-if='shift.bEditShift')
+        td(colspan=7, ng-form='shift.theForm')
+          .iqx-center.well.well-sm
+            +InlineDatePopup('shift','shiftdate',{required:true},'Shift Date',70)
+          .iqx-center.well.well-sm
+            table
+              tbody
+                tr
+                  td
+                    +InlineTimePopup('shift','timefrom',{required:true},'From')
+                  td
+                    +InlineTimePopup('shift','timeto',{required:true},'To')
+          .iqx-center.well.well-sm
+            +InlineSpinner('shift','breakminutes',{step:5, min:0},'Break Minutes')
+          .iqx-center
+            .text-danger(ng-if='shift.formError') {{ shift.formError }}
+            button.btn.btn-sm.btn-primary(ng-click='saveShift(shift)') Ok&nbsp;
+              span.glyphicon.glyphicon-ok
+            button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel&nbsp;
+              span.glyphicon.glyphicon-remove
+          
+  table.table.table-striped.table-condensed(ng-show='timeTimesheet')
+    thead
+      tr
+        th Date
+        th From
+        th.textright Hours
+        th
+    tbody
+      tr(ng-repeat-start='shift in timesheetTimes',ng-if='!shift.bEditShift')
+        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
+        td {{ shift.timefrom | date:'HH:mm' }}
+        td.textright {{ shift.hours | number:2 }}
         td
           button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='editShift(shift)') 
             | Edit&nbsp;
             span.glyphicon.glyphicon-edit
       tr(ng-repeat-end,ng-if='shift.bEditShift')
-        td(colspan=7)
-          +InlineDatePopup('shift','shiftdate',{})
-          p
-            +InlineTimePopup('shift','timefrom',{},'From')
-            +InlineTimePopup('shift','timeto',{},'to')
-          p
-            button.btn.btn-sm.btn-primary(ng-click='saveShift(shift)') Ok
-            button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel
-          
-  button.btn.btn-success.btn-default(ng-click='calc()') Calculate
-  
-  table.table.table-striped(ng-show='timeTimesheet')
-    thead
-      tr
-        th Date
-        th From
-        th Hours
-    tbody
-      tr(ng-repeat='shift in timesheetTimes')
-        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
-        td {{ shift.timefrom | date:'HH:mm' }}
-        td {{ shift.hours | number:2 }}
+        td(colspan=4, ng-form='shift.theForm')
+          .iqx-center.well.well-sm
+            p(style='font-weight:bold;') {{ shift.shiftdate | date:'EEEE dd/MM/yyyy' }}
+            table
+              thead
+                tr
+                  th.textcentre From
+                  th
+                  th.textcentre Hours
+              tbody
+                tr
+                  td
+                    +InlineTimePopup('shift','timefrom',{required:true})
+                  td| &nbsp;
+                  td
+                    +InlineSpinner('shift','hours',{min:0,step:'0.25',width:75})
+          .iqx-center
+            .text-danger(ng-if='shift.formError') {{ shift.formError }}
+            button.btn.btn-sm.btn-primary(ng-click='saveTime(shift)') Ok&nbsp;
+              span.glyphicon.glyphicon-ok
+            button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel&nbsp;
+              span.glyphicon.glyphicon-remove
         
-  table.table.table-striped(ng-show='completedTimesheet')
+  button.btn.btn-success.btn-default(ng-show='!bEditing', ng-click='calc()') Calculate&nbsp;
+    span.glyphicon.glyphicon-cog
+  
+  table.table.table-striped.table-condensed(ng-show='completedTimesheet')
     thead
       tr
         th Pay Type
         th Unit
-        th Units
-        th Rate
-        th Total
+        th.textright Units
+        th.textright Rate
+        th.textright Total
     tbody
       tr(ng-repeat='rate in timesheetRates')
         td {{ rate.BandDescription }}
         td {{ rate.UnitDescription }}
-        td {{ rate.Units | number:2 }}
-        td {{ rate.Rate | number:2 }}
-        td {{ rate.Total | number:2 }}
+        td.textright {{ rate.Units | number:2 }}
+        td.textright {{ rate.Rate | number:2 }}
+        td.textright {{ rate.Total | number:2 }}
         
   .text-danger(ng-if='formError') {{ formError }}
         
