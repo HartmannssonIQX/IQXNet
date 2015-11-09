@@ -1,15 +1,27 @@
-mixin InlineDatePopup(sRecord,sID,oAttrs)
-  p.input-group.datepicker(style='max-width:300px;')
-    input.form-control(type='text', id=sID, name=sID, ng-model=sRecord+'.'+sID, datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions')&attributes(oAttrs)
-    span.input-group-btn
-      button.btn.btn-default(type='button', ng-click='dateOpen($event,\''+sID+'\')')
-        i.glyphicon.glyphicon-calendar
+mixin InlineDatePopup(sRecord,sID,oAttrs,sLabel,nShift)
+  - nShift = nShift || 0
+  table(style='display:inline-table')
+    tbody
+      tr
+        td(style='padding:0px 5px;font-weight:bold;')= sLabel
+        td
+          p.input-group.datepicker( ng-class="{'has-error':#{sRecord}.theForm.#{sID}.$invalid}")
+            input.form-control(type='text', id=sID, name=sID, ng-model=sRecord+'.'+sID, datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions', ng-class="inlinedatepopup")&attributes(oAttrs)
+            span.input-group-btn
+              button.btn.btn-default(type='button', ng-click='dateOpen($event,\'#{sID}\',#{nShift})')
+                i.glyphicon.glyphicon-calendar
         
 mixin InlineTimePopup(sRecord,sID,oAttrs,sLabel)
-  table(style='display:inline-table;min-height:90px;')
-    tbody
-      tr: td &nbsp;
-      tr: td= sLabel
-      tr: td &nbsp;
-  timepicker(ng-model=sRecord+'.'+sID, minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+  span(style='position:relative;top:24px;margin:0px 5px;font-weight:bold;')= sLabel
+  timepicker(id=sID, name=sID, ng-model=sRecord+'.'+sID, minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+
+mixin InlineSpinner(sRecord,sID,oAttrs,sLabel)
+  span(style='position:relative;top:24px;margin:0px 5px;font-weight:bold;')= sLabel
+  spinner(id=sID, name=sID, ng-model=sRecord+'.'+sID, style='display:inline-table')&attributes(oAttrs)
+  
+mixin InlineField(sType,sRecord,sID,oAttrs,sLabel)
+  //- span(style='position:relative;top:24px;margin:0px 5px;font-weight:bold;')= sLabel
+  input.form-control(type=sType, id=sID, name=sID, ng-model=sRecord+'.'+sID)&attributes(oAttrs)
+  
+
 
