@@ -29,10 +29,16 @@ angular.module('app')
     scope.dateFormat='dd/MM/yyyy'  
     scope.dateOptions={}
     scope.dateIsOpen={}
-    scope.dateOpen = function(event,sID) {
+    scope.dateOpen = function(event,sID,shiftLeft) {
       event.preventDefault()
       event.stopPropagation()
       scope.dateIsOpen[sID] = true
+      if (shiftLeft) {
+        $timeout(svc.shiftDatePopupLeft,0,true,sID,shiftLeft)
+        }
+      }
+    scope.dateClose = function(sID) {
+      scope.dateIsOpen[sID]=false
       }
       
     scope.autoEdit=scope.FormSvcOptions.autoEdit
@@ -81,7 +87,17 @@ angular.module('app')
       }
 
     }
-    
+   
+  svc.shiftDatePopupLeft=function(sID,px) {
+    var el=document.getElementById(sID)
+    if (el) {
+      var sc=angular.element(el).isolateScope()
+      if (sc && sc.position) {
+        sc.position.left=0-px
+        }
+      }
+    }
+   
   svc.setEditing=function (scope,bOn) {
     if (bOn === undefined) {bOn=true}
     scope.isEditing=bOn
