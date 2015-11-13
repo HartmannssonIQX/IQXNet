@@ -20,5 +20,8 @@ angular.module('app')
     $scope.isSwitchedOn=function (xSwitch) {
       return (ApplicationSvc.currentUser.Switches && ApplicationSvc.currentUser.Switches.indexOf(xSwitch)>=0)
       }
+    $scope.stopProp=function($event) {
+      $event.stopPropagation()
+      }
     })
     
