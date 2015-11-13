@@ -1,5 +1,5 @@
 angular.module('app')
-.service('ApplicationSvc', function ($http, $window, $modal) {
+.service('ApplicationSvc', function ($http, $window, $uibModal) {
   var svc=this
   svc.isLoggedIn=false
   svc.currentUser={}
@@ -55,7 +55,7 @@ angular.module('app')
     }
     
   svc.messageDialog=function (caption, message, okText, cancelText, bSucceedIfCancel) {
-    return $modal.open({
+    return $uibModal.open({
       templateUrl: 'views/modalDialog.html',
       size: 'sm',
       controller:'ModalCtrl',

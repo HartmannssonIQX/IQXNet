@@ -5,7 +5,7 @@ angular.module('app')
   
   $scope.fetchTimesheet=function() {
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheet?pTempProvTimesheetID='+$scope.ProvTSID, 
-      fetchTarget:'timesheet',dateFields:['weekenddate']})
+      dateFields:['weekenddate'],booleanFields:['theirrefrequired']})
     }
   
   $scope.fetchTimesheetShifts=function() {
@@ -26,22 +26,22 @@ angular.module('app')
     }
   
   $scope.load=function() {
-    $scope.timesheet={}
+    $scope.theRecord={}
     $scope.shiftTimesheet=false
     $scope.timeTimesheet=false
     return $scope.fetchTimesheet()
     .then(function () {   
-      if ($scope.timesheet.timesheettype=='S') {
+      if ($scope.theRecord.timesheettype=='S') {
         $scope.shiftTimesheet=true
         return $scope.fetchTimesheetShifts()
-      } else if ($scope.timesheet.timesheettype=='T') {
+      } else if ($scope.theRecord.timesheettype=='T') {
         $scope.timeTimesheet=true
         return $scope.fetchTimesheetTimes()
         }
       })
     .then(function () {
-      if ($scope.timesheet.completed==1) {
-        $scope.completedTimesheet=true
+      if ($scope.theRecord.completed==1) {
+        $scope.calculatedTimesheet=true
         return $scope.fetchTimesheetRates()
         }
       })
@@ -84,7 +84,7 @@ angular.module('app')
       $scope.bEditing=false
       $scope.bCopyingShift=false
       sh.bEditShift=false
-      $scope.completedTimesheet=false    
+      $scope.calculatedTimesheet=false    
       })
     .then(function() {
       $scope.fetchTimesheetShifts()
@@ -107,7 +107,7 @@ angular.module('app')
     .then(function() { 
       $scope.bEditing=false
       sh.bEditShift=false
-      $scope.completedTimesheet=false    
+      $scope.calculatedTimesheet=false    
       })
     .then(function() {
       $scope.fetchTimesheetTimes()
@@ -115,7 +115,7 @@ angular.module('app')
   }
   
   $scope.uncompleteTimesheet=function() {
-    $scope.completedTimesheet=false 
+    $scope.calculatedTimesheet=false 
   }
   
   $scope.unEditShift=function(sh) {
@@ -143,7 +143,7 @@ angular.module('app')
   $scope.calcTimeTimesheet=function() {
     return $scope.exec('service/ProvNonShiftTSProcessRateScript',{id:$scope.ProvTSID})
     .then(function() {
-      $scope.completedTimesheet=true
+      $scope.calculatedTimesheet=true
       return $scope.fetchTimesheetRates()
       })
     }
@@ -160,7 +160,7 @@ angular.module('app')
       return $scope.exec('service/ProvTSProcessRateScript',{id:$scope.ProvTSID})
       })
     .then(function() {
-      $scope.completedTimesheet=true
+      $scope.calculatedTimesheet=true
       return $scope.fetchTimesheetRates()
       })
     }

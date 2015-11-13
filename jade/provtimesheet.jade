@@ -1,8 +1,9 @@
 include ./table-blocks.jade
+include ./standard-blocks.jade
 
 .container-fluid
-  h3 Timesheet {{ timesheet.serialnumber }} 
-  h4 {{ timesheet.position }} at {{ timesheet.companyname }}
+  h3 Timesheet {{ theRecord.serialnumber }} 
+  h4 {{ theRecord.position }} at {{ theRecord.companyname }}
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}
   
   table.table.table-striped.table-condensed(ng-show='shiftTimesheet')
@@ -95,7 +96,7 @@ include ./table-blocks.jade
   button.btn.btn-success.btn-default(ng-show='!bEditing', ng-click='calc()') Calculate&nbsp;
     span.glyphicon.glyphicon-cog
   
-  table.table.table-striped.table-condensed(ng-show='completedTimesheet')
+  table.table.table-striped.table-condensed(ng-show='calculatedTimesheet')
     thead
       tr
         th Pay Type
@@ -110,6 +111,9 @@ include ./table-blocks.jade
         td.textright {{ rate.Units | number:2 }}
         td.textright {{ rate.Rate | number:2 }}
         td.textright {{ rate.Total | number:2 }}
+        
+  +Container({'ng-class':"{'form-horizontal':true}",'ng-show':'calculatedTimesheet && theRecord.theirrefrequired','ng-form':'theForm'})
+    +FormField('text','theirref','Reference',{'required':true,'ng-disabled':false})
         
   .text-danger(ng-if='formError') {{ formError }}
         

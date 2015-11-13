@@ -24,6 +24,11 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
           ul.nav.navbar-nav(ng-if="userClass()=='CANDIDATE'")
             li: a(href='/#/canddetails') Details
             li: a(href='/#/provtimesheets') Timesheets
+            li(uib-dropdown=true,dropdown-append-to-body=true)
+              a(href=true,uib-dropdown-toggle=true) Dropdown
+              ul.uib-dropdown-menu
+                li: a(href='#/') Item 1
+                li: a(href='#/') Item 2
             li(ng-if="userHasRight('DIARY')"): a(href='/#/canddiary') Diary
             li(ng-if="isSwitchedOn('JOBSEARCH')"): a(href='/#/jobsearch') Job Search            
             li(ng-if="userHasRight('DOCCANDDOWNLOAD')"): a(href='/#/canddocuments') Documents
@@ -46,6 +51,6 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
     script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js')
     script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-messages.min.js')
     script(src='//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js')
-    script(src='//cdn.jsdelivr.net/angular.bootstrap/0.13.3/ui-bootstrap-tpls.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js')
     script(src='/lib/angular-bootstrap-calendar-tpls.min.js')
     script(src='/app.js')
