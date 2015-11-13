@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('CandProvTSCtrl', function ($scope, $location, FormSvc) {
+.controller('ProvTimesheetsCtrl', function ($scope, $location, FormSvc) {
   FormSvc.setOptions($scope,{
       fetchAPI:'callresult/netcandprovtimesheets',
       dateFields:['weekenddate'],
