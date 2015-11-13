@@ -34,7 +34,8 @@ mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
     label.control-label.col-sm-2(for=sID)= sLabel
     .col-sm-10
       input.form-control(type=sType, id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
     
 mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
@@ -44,7 +45,8 @@ mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
       select.form-control(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
         each item in aChoices
           option(value=item.Value)= item.Descrip
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
 
 mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
@@ -52,11 +54,12 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
     label.control-label.col-sm-2(for=sID)= sLabel
     .col-sm-10
       p.input-group
-        input.form-control(type='text', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions')&attributes(oAttrs)
+        input.form-control(type='text', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', uib-datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions')&attributes(oAttrs)
         span.input-group-btn
           button.btn.btn-default(type='button', ng-disabled='!isEditing', ng-click='dateOpen($event,\''+sID+'\')')
             i.glyphicon.glyphicon-calendar
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
       
 mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
@@ -64,7 +67,8 @@ mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
     label.control-label.col-sm-2(for=sID)= sLabel
     .col-sm-10.checkbox
       input.form-control(type='checkbox', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
     
 mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
@@ -72,14 +76,16 @@ mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
     label.control-label.col-sm-2(for=sID)= sLabel
     .col-sm-10
       textarea.form-control(id=sID, name=sID, rows=nRows, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
     
 mixin FormFile(sID,sLabel,oAttrs)
   .form-group
     label.control-label.col-sm-2(for=sID)= sLabel
     .col-sm-10
       .form-control.btn.btn-success.btn-default(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', ngf-select='uploadSelect($files, $file, $event)', ngf-drop='uploadSelect($files, $file, $event)')&attributes(oAttrs) {{uploadFileName()}}
-      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-messages-include='/views/error-messages-upload.html', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages-upload.html')
       
 mixin FormFileUpload
   .btn-group.btn-group-justified(role='group', ng-show='theForm.$valid')
