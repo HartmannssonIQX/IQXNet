@@ -1,3 +1,5 @@
+include ./standard-blocks.jade
+
 doctype html
 html(ng-app='app', ng-controller='ApplicationCtrl')
   head
@@ -10,35 +12,29 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
     link(rel='stylesheet', href='/print.css')
     title {{params.browserTitle}}
   body
-    nav.navbar.navbar-inverse.navbar-fixed-top
-      .container.navbar-container
-        .navbar-header.pull-left
-          a.navbar-brand(href='/#/', target='_top', ng-if='!params.logoFile') {{params.headerName}}
-          a.navbar-brand.navbar-brand-img(href='/#/', ng-if='params.logoFile')
-            img(alt='{{params.logoAlt}}', ng-src='{{params.logoFile}}')
-        button.navbar-toggle(type='button', ng-click='isCollapsed = !isCollapsed')
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        .navbar-collapse(ng-class='{collapse: isCollapsed}', ng-init='isCollapsed = true', ng-click='isCollapsed = true') 
-          ul.nav.navbar-nav(ng-if="userClass()=='CANDIDATE'")
-            li: a(href='/#/canddetails') Details
-            li: a(href='/#/provtimesheets') Timesheets
-            li(uib-dropdown=true)
-              a(href=true,uib-dropdown-toggle=true,data-toggle='dropdown',ng-click="stopProp($event)") Dropdown&nbsp;
-                b.caret
-              ul(uib-dropdown-menu=true)
-                li: a(href='#/') Item 1
-                li: a(href='#/') Item 2
-            li(ng-if="userHasRight('DIARY')"): a(href='/#/canddiary') Diary
-            li(ng-if="isSwitchedOn('JOBSEARCH')"): a(href='/#/jobsearch') Job Search            
-            li(ng-if="userHasRight('DOCCANDDOWNLOAD')"): a(href='/#/canddocuments') Documents
-          ul.nav.navbar-nav(ng-if="userClass()=='OWNER'")
-            li: a(href='/#/serverstats') Stats
-            li(ng-if="userHasRight('APIDESIGN') && isSwitchedOn('APIDESIGN')"): a(href='/#/apiprocs') API
-            li(ng-if="userHasRight('TESTONLY')"): a(href='/#/test') Test
-          ul.nav.navbar-nav.navbar-right(ng-if='isLoggedIn()')
-            li: a(href='/#/login', ng-click='logout()') {{ userName() }} - Log out
+    //- Blank navigation for when not logged in as it shows nothing otherwise :(
+    +nav("","",{})
+
+    +nav("Candidate Navigation", "main_menu", {"ng-if":'userClass()==\'CANDIDATE\''})
+      +nav_item( "/#/canddetails" ) Details
+      +nav_item( "/#/provtimesheets" ) Timesheets
+      +nav_item_dropdown( "#" )( label="Dropdown ")
+        +nav_item( "#/" ) Item 1
+        +nav_item( "#/" ) Item 2
+        +nav_item( "#/" ) Item 3
+        +nav_divider
+        +nav_header Header Item
+        +nav_item( "#" ) Item 4
+        +nav_item( "#" ) Item 6
+      +nav_item( "/#/canddiary", {"ng-if":'userHasRight(\'DIARY\')'} ) Diary
+      +nav_item( "/#/jobsearch", {"ng-if":'isSwitchedOn(\'JOBSEARCH\')'} ) Job Search
+      +nav_item( "/#/canddocuments", {"ng-if":'userHasRight(\'DOCCANDDOWNLOAD\')'} ) Documents
+
+    +nav("Owner Navigation", "main_menu", {"ng-if":'userClass()==\'OWNER\''})
+      +nav_item( "/#/serverstats" ) Stats
+      +nav_item( "/#/apiprocs", {"ng-if":'userHasRight(\'APIDESIGN\') && isSwitchedOn(\'APIDESIGN\')'} ) API
+      +nav_item( "/#/test", {"ng-if":'userHasRight(\'TESTONLY\')'} ) Test
+
     .mynavspacer
     div(ng-view)
     .myfooterspacer
