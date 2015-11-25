@@ -5,6 +5,7 @@ begin
   declare userClass char(20);
   declare x integer;
   declare y integer;
+  declare @companycount integer;
   set x=pSliceSize;
   set y=x*pSlice+1;
   set userClass=(select first iqxnetuserclassid from iqxnetuser where iqxnetuserid = pWebUserID);

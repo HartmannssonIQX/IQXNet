@@ -39,6 +39,7 @@ angular.module('app')
                   contractTimesheet:false, // This timesheet has neither shifts nor pseudo-shifts
                   editing:false, // A shift, time line or rate line is being edited
                   copying:false, // We are editing the copy of a line in question
+                  allowedToAuthorise:($scope.userHasRight('AUTHORISETIMESHEETS')),
                   canEditTheirRef:($scope.userClass()=='CLIENT')
                   }
     return $scope.fetchTimesheet()
