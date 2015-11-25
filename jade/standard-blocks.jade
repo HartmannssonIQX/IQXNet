@@ -93,7 +93,7 @@ mixin FormFileUpload
       button.btn.btn-primary.btn-default(type='button', ng-click='uploadExecute()') Upload
       
 mixin Pager
-  pager(total-items='totalItems', items-per-page='itemsPerPage', ng-model='currentPage', ng-change='fetch()', align='false')
+  uib-pager(total-items='totalItems', items-per-page='itemsPerPage', ng-model='currentPage', ng-change='fetch()', align='false')
   
 mixin FormError
   .text-danger(ng-if='formError') {{ formError }}
