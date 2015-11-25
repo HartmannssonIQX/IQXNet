@@ -19,5 +19,15 @@ mixin InlineSpinner(sRecord,sID,oAttrs,sLabel)
   span(style='position:relative;top:24px;margin:0px 5px;font-weight:bold;')= sLabel
   spinner(id=sID, name=sID, ng-model=sRecord+'.'+sID, style='display:inline-table')&attributes(oAttrs)
   
+mixin InlineField(sType,sRecord,sID,oAttrs)
+  input.form-control(type=sType, id=sID, name=sID, ng-model=sRecord+'.'+sID)&attributes(oAttrs)
+  
+mixin xxxInlineField(sType,sRecord,sID,oAttrs,sLabel,xAttrs)
+  - xAttrs = xAttrs || {}
+  .form-group&attributes(xAttrs)
+    label.control-label.col-sm-2(for=sID)= sLabel
+    .col-sm-10
+      input.form-control(type=sType, id=sID, name=sID, ng-model=sRecord+'.'+sID)&attributes(oAttrs)
+  
 
 

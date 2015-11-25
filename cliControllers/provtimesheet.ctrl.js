@@ -1,17 +1,21 @@
 angular.module('app')
-.controller('ProvTimesheetCtrl', function ($scope, $routeParams, $q, FormSvc, ApiSvc, ApplicationSvc) {
+.controller('ProvTimesheetCtrl', function ($scope, $routeParams, $q, $location, FormSvc, ApiSvc, ApplicationSvc) {
   FormSvc.setOptions($scope)
   $scope.ProvTSID=$routeParams.id  
   
-  $scope.fetchTimesheet=function() {
+  $scope.fetchTimesheet=function() { // Fetch the timesheet header
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheet?pTempProvTimesheetID='+$scope.ProvTSID, 
-      dateFields:['weekenddate'],booleanFields:['theirrefrequired']})
+      dateFields:['weekenddate'],booleanFields:['theirrefrequired','completed']})
     }
   
   $scope.fetchTimesheetShifts=function() {
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheetshifts?pTempProvTimesheetID='+$scope.ProvTSID, 
-      fetchTarget:'timesheetShifts',multiRow:true,dateFields:['weekenddate','shiftdate'],timeFields:['timefrom','timeto'],
-      booleanFields:['tick']})
+                         fetchTarget:'timesheetShifts',
+                         multiRow:true,
+                         dateFields:['weekenddate','shiftdate'],
+                         timeFields:['timefrom','timeto'],
+                         booleanFields:['tick']
+                         })
     }
   
   $scope.fetchTimesheetTimes=function() {
@@ -22,49 +26,60 @@ angular.module('app')
   
   $scope.fetchTimesheetRates=function() {
     return $scope.fetch({fetchAPI:'callresult/netprovtimesheetrates?pTempProvTimesheetID='+$scope.ProvTSID, 
-      fetchTarget:'timesheetRates',multiRow:true})
+      fetchTarget:'timesheetRates', multiRow:true, booleanFields:['IsExpenses','CanEdit','CanEditUnits'], numberFields:['Units','Rate']})
     }
   
-  $scope.load=function() {
+  $scope.load=function() { // Load whole timesheet
     $scope.theRecord={}
-    $scope.shiftTimesheet=false
-    $scope.timeTimesheet=false
+    $scope.state={calculated:false, // The calculated timesheet lines/rates are available
+                  completed:false, // Timesheet has been flagged as completed
+                  showingDetails:true, // Display the shifts/time details
+                  shiftTimesheet:false, // This is a shift timesheet
+                  timeTimesheet:false, // This is a pseudo-shift timesheet
+                  contractTimesheet:false, // This timesheet has neither shifts nor pseudo-shifts
+                  editing:false, // A shift, time line or rate line is being edited
+                  copying:false, // We are editing the copy of a line in question
+                  canEditTheirRef:($scope.userClass()=='CLIENT')
+                  }
     return $scope.fetchTimesheet()
     .then(function () {   
       if ($scope.theRecord.timesheettype=='S') {
-        $scope.shiftTimesheet=true
+        $scope.state.shiftTimesheet=true
         return $scope.fetchTimesheetShifts()
       } else if ($scope.theRecord.timesheettype=='T') {
-        $scope.timeTimesheet=true
+        $scope.state.timeTimesheet=true
         return $scope.fetchTimesheetTimes()
         }
       })
     .then(function () {
-      if ($scope.theRecord.completed==1) {
-        $scope.calculatedTimesheet=true
+      if (!($scope.state.shiftTimesheet || $scope.state.timeTimesheet)) {$scope.state.contractTimesheet=true}
+      if ($scope.theRecord.completed || $scope.state.contractTimesheet) {
+        $scope.state.calculated=true
+        $scope.state.completed=$scope.theRecord.completed
+        $scope.state.showingDetails=$scope.theRecord.completed
         return $scope.fetchTimesheetRates()
         }
       })
     }
     
-  $scope.editShift=function(sh) {
+  $scope.editShift=function(sh) { // Edit an individual shift or time
     sh.formError=''
-    $scope.bEditing=true
+    $scope.state.editing=true
     $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits
-    sh.bEditShift=true
+    sh.editing=true
   }
   
-  $scope.copyShift=function(sh){
+  $scope.copyShift=function(sh){ // Duplicate a shift then edit the copy
     var newSh=angular.copy(sh)
     if (newSh.tempshiftid.substr(0,5)!=='Copy_') {
       newSh.tempshiftid='Copy_'+newSh.tempshiftid
       }
-    $scope.bCopyingShift=true
+    $scope.state.copying=true
     $scope.timesheetShifts.push(newSh)  
     $scope.editShift(newSh)
   }
   
-  $scope.saveableShift=function(sh) {
+  $scope.saveableShift=function(sh) { // The post object for the NetProvTimesheetShiftSet api
     return {ptempshiftid:sh.tempshiftid,
             pshiftdate:ApiSvc.DateToString(sh.shiftdate),
             ptimefrom:ApiSvc.TimeToString(sh.timefrom),
@@ -73,84 +88,142 @@ angular.module('app')
             }
   }
   
-  $scope.saveShift=function(sh) {
+  $scope.saveShift=function(sh) { // Save an edited shift
     $scope.dateClose('shiftdate')
     if (sh.theForm.$invalid) {return sh.formError='There are invalid values'}
     var saveData=$scope.saveableShift(sh)
-    if ((!$scope.bCopyingShift) && angular.equals(saveData,$scope.saveableShift($scope.safeShift))) {return $scope.unEditShift(sh)}
+    if ((!$scope.state.copying) && angular.equals(saveData,$scope.saveableShift($scope.safeShift))) {return $scope.unEditShift(sh)}
     sh.formError=''
-    return $scope.exec('call/NetProvTimesheetShiftSet',saveData)
+    return $scope.exec('call/NetProvTimesheetShiftSet',saveData) // Do the save
     .then(function() { 
-      $scope.bEditing=false
-      $scope.bCopyingShift=false
-      sh.bEditShift=false
-      $scope.calculatedTimesheet=false    
+      $scope.state.editing=false
+      $scope.state.copying=false
+      sh.editing=false
+      $scope.state.calculated=false    
       })
-    .then(function() {
+    .then(function() { // Refetch all the shifts
       $scope.fetchTimesheetShifts()
       })
   }
   
-  $scope.saveableTime=function(sh) {
+  $scope.saveableTime=function(sh) { // The post object for the NetProvTimesheetTimeSet api
     return {ptempshiftid:sh.tempshiftid,
             pplacementid_date:sh.placementid + '_' + ApiSvc.DateToString(sh.shiftdate),
             phours:sh.hours,
             ptimefrom:ApiSvc.TimeToString(sh.timefrom)
             }
   }
-  $scope.saveTime=function(sh) {
+  
+  $scope.saveTime=function(sh) { // Save an edited time line
     if (sh.theForm.$invalid) {return sh.formError='There are invalid values'}
     var saveData=$scope.saveableTime(sh)
     if (angular.equals(saveData,$scope.saveableTime($scope.safeShift))) {return $scope.unEditShift(sh)}
     sh.formError=''
-    return $scope.exec('call/NetProvTimesheetTimeSet',saveData)
+    return $scope.exec('call/NetProvTimesheetTimeSet',saveData) // Do the save
     .then(function() { 
-      $scope.bEditing=false
-      sh.bEditShift=false
-      $scope.calculatedTimesheet=false    
+      $scope.state.editing=false
+      sh.editing=false
+      $scope.state.calculated=false    
       })
     .then(function() {
-      $scope.fetchTimesheetTimes()
+      $scope.fetchTimesheetTimes() // Re-fetch all the times
       })
   }
   
-  $scope.uncompleteTimesheet=function() {
-    $scope.calculatedTimesheet=false 
+  $scope.unCalculateTimesheet=function() { // Indicate that re-calculation is required
+    $scope.state.calculated=false 
   }
   
-  $scope.unEditShift=function(sh) {
+  $scope.showDetails=function() { // Switch on the times/shifts visibility
+    $scope.showingDetails=true
+  }
+  
+  $scope.unEditShift=function(sh) { // Cancel a shift or time edit
     $scope.dateClose('shiftdate')
     sh.formError=''
-    $scope.bEditing=false
-    if ($scope.bCopyingShift) {
+    $scope.state.editing=false
+    if ($scope.state.copying) {
       $scope.timesheetShifts.pop()
     } else {
       angular.copy($scope.safeShift,sh)  // Replace the contents of sh with the safe copy
     }
-    $scope.bCopyingShift=false
-    sh.bEditShift=false
+    $scope.state.copying=false
+    sh.editing=false
   }
   
-  $scope.shiftLength=function(sh) {
+  $scope.shiftLength=function(sh) { // Shift duration in hours
     var start=moment().hours(sh.timefrom.getHours()).minutes(sh.timefrom.getMinutes())
     var end=moment().hours(sh.timeto.getHours()).minutes(sh.timeto.getMinutes())
     var len=end.diff(start,'hours',true)
-    if (len<=0) {len=24.0+len}
+    if (len<=0) {len=24.0+len}  // Overnight
     if (sh.breakminutes) {len=len-sh.breakminutes/60}
     return len
   }
+  
+  $scope.saveableRate=function(rt) { // The post object for the NetProvTimesheetRateSet api
+    return {pTempProvTimesheetLineID:rt.TempProvTimesheetLineID,
+            pUnitDescription:rt.UnitDescription,
+            pUnits:rt.Units,
+            pRate:rt.Rate
+            }
+  }
+  
+  $scope.editRate=function(rt) {  // Edit a timesheet rate line
+    rt.formError=''
+    $scope.state.editing=true
+    $scope.safeRate=angular.copy(rt)  // Make safe copy in case of cancel edits
+    rt.editing=true
+  }
     
-  $scope.calcTimeTimesheet=function() {
+  $scope.copyRate=function(rt) {  // Copy a timesheet rate line - expenses only - then edit the copy
+    var newRt=angular.copy(rt)
+    if (newRt.TempProvTimesheetLineID.substr(0,5)!=='Copy_') {
+      newRt.TempProvTimesheetLineID='Copy_'+newRt.TempProvTimesheetLineID
+      }
+    $scope.state.copying=true
+    $scope.timesheetRates.push(newRt)  
+    $scope.editRate(newRt)
+  }
+    
+  $scope.saveRate=function(rt) {  // Save an edit timesheet rate line
+    if (rt.theForm.$invalid) {return rt.formError='There are invalid values'}
+    var saveData=$scope.saveableRate(rt)
+    if (angular.equals(saveData,$scope.saveableRate($scope.safeRate))) {return $scope.unEditRate(rt)}
+    rt.formError=''
+    return $scope.exec('call/NetProvTimesheetRateSet',saveData) // Do the save
+    .then(function() { 
+      $scope.state.editing=false
+      $scope.state.copying=false
+      rt.editing=false
+      })
+    .then(function() {
+      $scope.fetchTimesheetRates() // Re-fetch all the rates
+      })
+  }
+    
+  $scope.unEditRate=function(rt) {  // Cancel the edit of a timesheet rate line
+    rt.formError=''
+    $scope.state.editing=false
+    if ($scope.state.copying) {
+      $scope.timesheetRates.pop()
+    } else {
+      angular.copy($scope.safeRate,rt)  // Replace the contents of rt with the safe copy
+    }
+    $scope.state.copying=false
+    rt.editing=false
+  }
+    
+  $scope.calcTimeTimesheet=function() { // Execute the rate script for a non-shift timesheet
     return $scope.exec('service/ProvNonShiftTSProcessRateScript',{id:$scope.ProvTSID})
     .then(function() {
-      $scope.calculatedTimesheet=true
+      $scope.state.calculated=true
       return $scope.fetchTimesheetRates()
       })
     }
     
-  $scope.calc=function() {
+  $scope.calc=function() { // Execute the rate script on the selected data
     $scope.timesheetRates=[]
-    if ($scope.timeTimesheet) {return $scope.calcTimeTimesheet()}
+    if ($scope.timeTimesheet) {return $scope.calcTimeTimesheet()} // Re-direct to the non-shift procedure
     var aShifts=[]
     angular.forEach($scope.timesheetShifts, function(value) {
       if (value.tick) {aShifts.push(value.tempshiftid)}
@@ -160,11 +233,58 @@ angular.module('app')
       return $scope.exec('service/ProvTSProcessRateScript',{id:$scope.ProvTSID})
       })
     .then(function() {
-      $scope.calculatedTimesheet=true
+      $scope.state.calculated=true
       return $scope.fetchTimesheetRates()
       })
     }
     
+  $scope.saveTheirRef=function() { // Save theirref (if applicable)
+    if (!($scope.theForm.theirref.$dirty && $scope.state.canEditTheirRef)) {
+      return $q.when('') // Nothing to save - return fulfilled promise
+    } else {
+      return $scope.exec('call/NetProvTimesheetSetTheirRef',{pTempProvTimesheetID:$scope.ProvTSID,pTheirRef:$scope.theRecord.theirref})
+    }
+  }
+    
+  $scope.save=function() { // Save reference, questionnaire etc.
+    if (!$scope.theForm.$valid) {return $q.reject(scope.formError='There are invalid values')}
+    if (!$scope.theForm.$dirty) {return $q.when('')} // Nothing to save - return fulfilled promise
+    return $scope.saveTheirRef()
+  }
+    
+  $scope.complete=function() { // Mark calculated timesheet as completed
+    return $scope.save()
+    .then(function() {
+      return $scope.exec('call/NetProvTimesheetComplete',{pTempProvTimesheetID:$scope.ProvTSID})
+    })
+    .then(function() {
+      $scope.state.completed=true
+    })
+  }
+  
+  $scope.undo=function() { // Reverse complete() and return to edit mode
+    return $scope.exec('call/NetProvTimesheetComplete',{pTempProvTimesheetID:$scope.ProvTSID,pInstruction:'REVERSE'})
+    .then(function() {
+      $scope.state.completed=false
+    })
+  }
+  
+  $scope.authorise=function() { // Client authorisation of timesheet
+    return $scope.save()
+    .then(function() {
+        return ApplicationSvc.messageDialog('Authorise Timesheet','In authorising this timesheet you are deemed to have read and accepted our terms of business. When this timesheet has been authorised you are deemed to have approved the resulting invoice and will not raise any objection in relation to our charges - are you sure?','Yes','No')
+        })
+    .then(function() {
+      if ($scope.state.shiftTimesheet) {
+        return $scope.exec('service/ProvTSComplete',{ID:$scope.ProvTSID})
+      } else {
+        return $scope.exec('service/ProvNonShiftTSComplete',{ID:$scope.ProvTSID})
+      }
+    })
+    .then(function() { // Prov TS no longer exists - go back to list 
+      $location.url('/provtimesheets')
+    })
+  }
     
 // The initialisation code:    
   if ($scope.ProvTSID) {

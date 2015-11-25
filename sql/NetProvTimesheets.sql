@@ -20,7 +20,7 @@ begin
     from tempprovtimesheet as t key join vacancy key join employment key join company,tempprovtimesheet as t
     key join tempdesk,tempprovtimesheet as t key join person key join iqxnetuserlink
     where iqxnetuserlink.iqxnetuserid = pWebUserID and t.extnumber > 0
-    and weekenddate > current date-80 order by
+    and weekenddate > current date-100 order by
     weekenddate asc,t.serialnumber asc,companyname asc
   else if userClass = 'AGENCY' then
     select t.tempprovtimesheetid,t.serialnumber,string(person.surname,', ',person.forenames) as tempname,vacancy.position,company.name as companyname,'' as companyaddress,
