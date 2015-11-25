@@ -10,6 +10,7 @@ angular.module('app')
       savePrefix:'',
       dateFields:[],
       timeFields:[],
+      numberFields:[],
       booleanFields:[],
       primaryKey:'',
       multiRow:false,

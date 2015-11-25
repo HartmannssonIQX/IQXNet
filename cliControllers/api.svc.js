@@ -148,6 +148,17 @@ angular.module('app')
             theResult[value]=(theResult[value] == 1)
             }
           })
+        angular.forEach(options.numberFields, function (value) {
+          if (options.multiRow) {
+            angular.forEach(theResult, function (row) {
+              if (row[value] != undefined) {
+                row[value]=(Number(row[value]))
+                }
+              })
+          } else if (theResult[value] != undefined) {
+            theResult[value]=(Number(theResult[value]))
+            }
+          })
         if (options.fetchTarget) {
           scope[options.fetchTarget]=theResult
         } else if (options.multiRow) {
