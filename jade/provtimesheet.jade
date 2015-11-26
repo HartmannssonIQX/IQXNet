@@ -4,8 +4,10 @@ include ./standard-blocks.jade
 .container-fluid
 
   //- Header ---------------------------------------------
-  h3 Timesheet {{ theRecord.serialnumber }} 
-  h4 {{ theRecord.position }} at {{ theRecord.companyname }}
+  h3 Timesheet {{ theRecord.serialnumber }} - {{ theRecord.weekenddate | date:'dd/MM/yy'}}
+  h4(ng-if="userClass()=='CANDIDATE'") {{ theRecord.position }} at {{ theRecord.companyname }}
+  h4(ng-if="userClass()=='CLIENT'") {{ theRecord.tempname }} as {{ theRecord.position }}
+  h4(ng-if="userClass()=='AGENCY'") {{ theRecord.tempname }} as {{ theRecord.position }} at {{ theRecord.companyname }}
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}
   
   //- Shifts ----------------------------------------------
@@ -157,12 +159,11 @@ include ./standard-blocks.jade
   
   //- Footer - error message and buttons
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}
-  +Container({'ng-show':'state.calculated'})
-    button.btn.btn-success.btn-default(type='button', ng-show='!state.completed', ng-click='complete()') Complete&nbsp;
-      span.glyphicon.glyphicon-share
-    button.btn.btn-success.btn-default(type='button', ng-show='state.completed', ng-click='undo()') Edit&nbsp;
-      span.glyphicon.glyphicon-edit
-    button.btn.btn-success.btn-default(type='button', ng-if='state.allowedToAuthorise', ng-click='authorise()') {{state.completed?'':'Complete and '}}Authorise&nbsp;
-      span.glyphicon.glyphicon-check
+  button.btn.btn-success.btn-default(type='button', ng-show='state.calculated && !state.completed', ng-click='complete()') Complete&nbsp;
+    span.glyphicon.glyphicon-share
+  button.btn.btn-success.btn-default(type='button', ng-show='state.completed', ng-click='undo()') Edit&nbsp;
+    span.glyphicon.glyphicon-edit
+  button.btn.btn-success.btn-default(type='button', ng-if='state.calculated && state.allowedToAuthorise', ng-click='authorise()') {{state.completed?'':'Complete and '}}Authorise&nbsp;
+    span.glyphicon.glyphicon-check
     
         

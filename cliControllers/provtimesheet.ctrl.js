@@ -57,7 +57,7 @@ angular.module('app')
       if ($scope.theRecord.completed || $scope.state.contractTimesheet) {
         $scope.state.calculated=true
         $scope.state.completed=$scope.theRecord.completed
-        $scope.state.showingDetails=$scope.theRecord.completed
+        $scope.state.showingDetails=!$scope.theRecord.completed
         return $scope.fetchTimesheetRates()
         }
       })
@@ -136,7 +136,7 @@ angular.module('app')
   }
   
   $scope.showDetails=function() { // Switch on the times/shifts visibility
-    $scope.showingDetails=true
+    $scope.state.showingDetails=true
   }
   
   $scope.unEditShift=function(sh) { // Cancel a shift or time edit
@@ -224,7 +224,7 @@ angular.module('app')
     
   $scope.calc=function() { // Execute the rate script on the selected data
     $scope.timesheetRates=[]
-    if ($scope.timeTimesheet) {return $scope.calcTimeTimesheet()} // Re-direct to the non-shift procedure
+    if ($scope.state.timeTimesheet) {return $scope.calcTimeTimesheet()} // Re-direct to the non-shift procedure
     var aShifts=[]
     angular.forEach($scope.timesheetShifts, function(value) {
       if (value.tick) {aShifts.push(value.tempshiftid)}
@@ -248,7 +248,8 @@ angular.module('app')
   }
     
   $scope.save=function() { // Save reference, questionnaire etc.
-    if (!$scope.theForm.$valid) {return $q.reject(scope.formError='There are invalid values')}
+    $scope.formError=''
+    if (!$scope.theForm.$valid) {return $q.reject($scope.formError='There are invalid values')}
     if (!$scope.theForm.$dirty) {return $q.when('')} // Nothing to save - return fulfilled promise
     return $scope.saveTheirRef()
   }
@@ -264,6 +265,7 @@ angular.module('app')
   }
   
   $scope.undo=function() { // Reverse complete() and return to edit mode
+    $scope.formError=''
     return $scope.exec('call/NetProvTimesheetComplete',{pTempProvTimesheetID:$scope.ProvTSID,pInstruction:'REVERSE'})
     .then(function() {
       $scope.state.completed=false
@@ -271,6 +273,8 @@ angular.module('app')
   }
   
   $scope.authorise=function() { // Client authorisation of timesheet
+    $scope.formError=''
+    if (!$scope.state.allowedToAuthorise) {return $q.reject($scope.formError='Permission denied')}
     return $scope.save()
     .then(function() {
         return ApplicationSvc.messageDialog('Authorise Timesheet','In authorising this timesheet you are deemed to have read and accepted our terms of business. When this timesheet has been authorised you are deemed to have approved the resulting invoice and will not raise any objection in relation to our charges - are you sure?','Yes','No')
