@@ -4,8 +4,8 @@ mixin nav(xAttrs)
     .container.navbar-container
       .navbar-header.pull-left
         a.navbar-brand(href='/#/', target='_top', ng-if='!params.logoFile') {{params.headerName}}
-            a.navbar-brand.navbar-brand-img(href='/#/', ng-if='params.logoFile')
-              img(alt='{{params.logoAlt}}', ng-src='{{params.logoFile}}')
+        a.navbar-brand.navbar-brand-img(href='/#/', ng-if='params.logoFile')
+          img(alt='{{params.logoAlt}}', ng-src='{{params.logoFile}}')
       button.navbar-toggle(type='button', ng-click='isCollapsed = !isCollapsed')
         span.icon-bar
         span.icon-bar
