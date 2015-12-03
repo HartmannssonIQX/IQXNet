@@ -1,11 +1,24 @@
 angular.module('app')
-.controller('ProvTimesheetCtrl', function ($scope, $routeParams, $q, $location, FormSvc, ApiSvc, ApplicationSvc) {
-  FormSvc.setOptions($scope)
+.controller('ProvTimesheetCtrl', function ($scope, $routeParams, $q, $location, $timeout, FormSvc, ApiSvc, ApplicationSvc, QuestionnaireSvc) {
   $scope.ProvTSID=$routeParams.id  
+  FormSvc.setOptions($scope,{
+      fetchAPI:'callresult/NetProvTimesheet?pTempProvTimesheetID='+$scope.ProvTSID, 
+      saveAPI:'call/NetProvTimesheetSet',
+      primaryKey:'tempprovtimesheetid',
+      savePrefix:'p',
+      dateFields:['weekenddate'],
+      booleanFields:['theirrefrequired','completed'],
+      questionnaire:{
+        tagTarget:'tags',
+        tagLocation:'T',
+        displayGroup:($scope.userClass()=='CLIENT')?'CLITSCOMP':'CANDTSCOMP',
+        postVar:'qanswers'
+        }
+      })
+  ApplicationSvc.autoEdit=true  // Don't block navigation away from page
   
   $scope.fetchTimesheet=function() { // Fetch the timesheet header
-    return $scope.fetch({fetchAPI:'callresult/netprovtimesheet?pTempProvTimesheetID='+$scope.ProvTSID, 
-      dateFields:['weekenddate'],booleanFields:['theirrefrequired','completed']})
+    return $scope.fetch()
     }
   
   $scope.fetchTimesheetShifts=function() {
@@ -59,6 +72,11 @@ angular.module('app')
         $scope.state.completed=$scope.theRecord.completed
         $scope.state.showingDetails=!$scope.theRecord.completed
         return $scope.fetchTimesheetRates()
+        }
+      })
+    .then(function () {
+      if ($scope.state.calculated && !$scope.state.completed) {
+        return $timeout($scope.setEditing,0,true,true)  // Wrap in timeout to ensure DOM is built and ready first
         }
       })
     }
@@ -248,6 +266,7 @@ angular.module('app')
   }
     
   $scope.save=function() { // Save reference, questionnaire etc.
+    return FormSvc.update($scope,true);
     $scope.formError=''
     if (!$scope.theForm.$valid) {return $q.reject($scope.formError='There are invalid values')}
     if (!$scope.theForm.$dirty) {return $q.when('')} // Nothing to save - return fulfilled promise
