@@ -8,17 +8,18 @@ angular.module('app')
       savePrefix:'p',
       dateFields:['weekenddate'],
       booleanFields:['theirrefrequired','completed'],
+      doNotPreventNav:true,
       questionnaire:{
         tagTarget:'tags',
+        id:$scope.ProvTSID,
         tagLocation:'T',
         displayGroup:($scope.userClass()=='CLIENT')?'CLITSCOMP':'CANDTSCOMP',
         postVar:'qanswers'
         }
       })
-  ApplicationSvc.autoEdit=true  // Don't block navigation away from page
   
   $scope.fetchTimesheet=function() { // Fetch the timesheet header
-    return $scope.fetch()
+    return $scope.fetch()  // The primary fetch using the scope options above
     }
   
   $scope.fetchTimesheetShifts=function() {
@@ -75,7 +76,7 @@ angular.module('app')
         }
       })
     .then(function () {
-      if ($scope.state.calculated && !$scope.state.completed) {
+      if (!$scope.state.completed) {
         return $timeout($scope.setEditing,0,true,true)  // Wrap in timeout to ensure DOM is built and ready first
         }
       })
@@ -256,21 +257,9 @@ angular.module('app')
       return $scope.fetchTimesheetRates()
       })
     }
-    
-  $scope.saveTheirRef=function() { // Save theirref (if applicable)
-    if (!($scope.theForm.theirref.$dirty && $scope.state.canEditTheirRef)) {
-      return $q.when('') // Nothing to save - return fulfilled promise
-    } else {
-      return $scope.exec('call/NetProvTimesheetSetTheirRef',{pTempProvTimesheetID:$scope.ProvTSID,pTheirRef:$scope.theRecord.theirref})
-    }
-  }
-    
+      
   $scope.save=function() { // Save reference, questionnaire etc.
-    return FormSvc.update($scope,true);
-    $scope.formError=''
-    if (!$scope.theForm.$valid) {return $q.reject($scope.formError='There are invalid values')}
-    if (!$scope.theForm.$dirty) {return $q.when('')} // Nothing to save - return fulfilled promise
-    return $scope.saveTheirRef()
+    return FormSvc.update($scope,true)
   }
     
   $scope.complete=function() { // Mark calculated timesheet as completed
@@ -280,6 +269,7 @@ angular.module('app')
     })
     .then(function() {
       $scope.state.completed=true
+      $scope.setEditing(false)
     })
   }
   
@@ -288,6 +278,7 @@ angular.module('app')
     return $scope.exec('call/NetProvTimesheetComplete',{pTempProvTimesheetID:$scope.ProvTSID,pInstruction:'REVERSE'})
     .then(function() {
       $scope.state.completed=false
+      $scope.setEditing(true)
     })
   }
   

@@ -5,7 +5,7 @@ angular.module('app')
   svc.currentUser={}
   svc.postLoginRoute='/'
   svc.isEditing=false
-  svc.autoEdit=false
+  svc.preventNavIfEditing=false
   var tempSess=$window.sessionStorage.getItem('IQXSession')
   if (tempSess) { 
     svc.currentUser=angular.fromJson(tempSess)

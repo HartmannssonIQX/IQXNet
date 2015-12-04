@@ -15,8 +15,10 @@ angular.module('app')
       primaryKey:'',
       multiRow:false,
       sliceSize:0, // No paging
+      primaryFetch:true,
       notLoggedIn:false,
       autoEdit:false,
+      doNotPreventNav:false,
       saveCleanFields:false,
       questionnaire:null
       },options)
@@ -43,7 +45,7 @@ angular.module('app')
       }
       
     scope.autoEdit=scope.FormSvcOptions.autoEdit
-    ApplicationSvc.autoEdit=scope.FormSvcOptions.autoEdit
+    ApplicationSvc.preventNavIfEditing=!scope.FormSvcOptions.doNotPreventNav && !scope.FormSvcOptions.autoEdit
     
     // Attach the key functions to the scope for easy use by the form
     scope.update=function () {
@@ -116,6 +118,7 @@ angular.module('app')
     }
       
   svc.update=function (scope, bSaveOnly) {
+      scope.formError=''
       if (!scope.isEditing) {return $q.when()}  // Returns a resolved promise so that it can be 'then'ed
       if (!scope.FormSvcOptions.saveAPI) {return $q.reject(scope.formError='No saveAPI in form service options')}
       svc.setSubmitted(scope,true)
@@ -169,6 +172,9 @@ angular.module('app')
 	svc.fetch=function (scope,options) {
     var theResult
     options = options || scope.FormSvcOptions 
+    if (!options.primaryFetch) {
+      return ApiSvc.fetch(scope,options)
+    }
     if (scope.theForm != undefined)  {
       scope.theForm.$setPristine()
       scope.theForm.$setUntouched()
