@@ -139,12 +139,12 @@ include ./standard-blocks.jade
                     +InlineField('text','rate','UnitDescription',{required:true})
                 tr
                   th.textright Units&nbsp;
-                  td.textcentre(ng-if='!rate.IsExpenses') {{ rate.Units | number:2 }}
-                  td(ng-if='rate.IsExpenses')
-                    +InlineField('number','rate','Units',{min:0})
+                  td
+                    +InlineField('number','rate','Units',{min:0,step:'0.25'})
                 tr
                   th.textright Rate&nbsp;
-                  td
+                  td.textcentre(ng-if='!rate.IsExpenses') {{ rate.Rate | number:2 }}
+                  td(ng-if='rate.IsExpenses')
                     +InlineField('number','rate','Rate',{min:0})
           .iqx-center
             .text-danger(ng-if='rate.formError') {{ rate.formError }}
