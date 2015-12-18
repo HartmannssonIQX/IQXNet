@@ -4,7 +4,7 @@ angular.module('app')
   
   $scope.doTest=function(tp) {
     $scope.testResult={working:'working..'}
-    ApiSvc.fetch($scope,{fetchAPI:'maint/stress'+tp,fetchTarget:'testResult'})
+    ApiSvc.fetch($scope,{fetchAPI:'maint/stress'+tp,fetchTarget:'testResult',doNotPreventNav:true})
     }
     
 
