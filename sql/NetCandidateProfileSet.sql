@@ -20,12 +20,12 @@ begin
     set "ssql" = "ssql"+',forenames=pforenames';
     set "ssql" = "ssql"+',salutation=getword(pforenames,1)';
     set "bnamechanged" = 1;
-    set fname1='pforenames';
+    set fname1='pforenames'
   end if;
   if "isnull"("psurname",'') <> "isnull"("poldsurname",'') then
     set "ssql" = "ssql"+',surname=psurname';
     set "bnamechanged" = 1;
-    set sname1='psurname';
+    set sname1='psurname'
   end if;
   if "bnamechanged" = 1 then
     set "ssql" = "ssql"+',name=string(getword('+fname1+',1),'' '','+sname1+')';

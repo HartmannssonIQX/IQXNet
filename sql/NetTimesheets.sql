@@ -56,7 +56,7 @@ begin
           where company.divisionid = divid and person.divisionid = divid order by
           t.serialnumber desc
     else -- CLIENT
-        set @companycount=(select count(*) from iqxnetuserlink where iqxnetuserid = pWebUserID);
+        set @companycount=(select count() from iqxnetuserlink where iqxnetuserid = pWebUserID);
       select top x start at y t.temptimesheetid,t.serialnumber,string(person.surname,', ',person.forenames) as tempname,vacancy.position,company.name as companyname,weekmonthenddate(t.period,t.periodlength) as weekenddate,
         if tempdesk.desktype = 'S' then 'S' else if tempdesk.desktype = 'W'
         and exists(select * from placement where placementid = t.placementid and worknormalhours is not null and workstarttime is not null

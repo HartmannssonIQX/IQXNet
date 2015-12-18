@@ -12,7 +12,7 @@ begin
     return
   end if;
   if pTheirRef is not null then
-    update tempprovtimesheet set theirref = ucase(ptheirref) where tempprovtimesheetid = ptempprovtimesheetid;
+    update tempprovtimesheet set theirref = ucase(ptheirref) where tempprovtimesheetid = ptempprovtimesheetid
   end if;
   call "IQXNetSaveQuestionnaire"("ptempprovtimesheetid","qanswers");
   select '0:~Success'

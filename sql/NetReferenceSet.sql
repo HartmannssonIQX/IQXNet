@@ -2,7 +2,7 @@ ALTER PROCEDURE "pears"."NetReferenceSet"( in "pWebUserID" char(20), in "pRefere
 result( "pResult" char(250) ) 
 begin
   if pCompleted=1 then
-	UPDATE ReferenceRequest SET WhenCompleted=current timestamp, ReferenceConfirmationRequired=pReferenceConfirmationRequired WHERE ReferenceRequestID = pReferenceRequestID;
+	UPDATE ReferenceRequest SET WhenCompleted=current timestamp, ReferenceConfirmationRequired=pReferenceConfirmationRequired WHERE ReferenceRequestID = pReferenceRequestID
   end if;
   call "IQXNetSaveQuestionnaire"("pReferenceRequestID","qanswers");
   select '0:~Success'
