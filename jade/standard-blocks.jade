@@ -30,10 +30,10 @@ mixin MiniForm(xAttrs)
     
 mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
-  .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+  .form-group&attributes(oAttrs)
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
-      input.form-control(type=sType, id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
+      input.form-control(type=sType, id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(xAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
     
