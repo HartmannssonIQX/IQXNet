@@ -30,6 +30,9 @@ mixin MiniForm(xAttrs)
     
 mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
@@ -39,6 +42,9 @@ mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
     
 mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
@@ -50,6 +56,9 @@ mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
 
 mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
@@ -63,6 +72,9 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
       
 mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10.checkbox
@@ -72,6 +84,9 @@ mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
     
 mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
