@@ -1,0 +1,5 @@
+<Job>
+<SetVariable name="appname" value="{WPK_G_appname}"/>
+<MessageDialog text='WPK Switch Check Applicant Terminology: {appname}'/>
+<Write>{appname}</Write>
+</Job>

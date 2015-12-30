@@ -1,28 +1,31 @@
-mixin nav(name, id, xAttrs)
-  nav.navbar.navbar-inverse.navbar-fixed-top( role="navigation", class=["navbar"] )&attributes(xAttrs)
+mixin nav(xAttrs)
+  - xAttrs = xAttrs || {}
+  nav.navbar.navbar-inverse.navbar-fixed-top( role="navigation" )&attributes(xAttrs)
     .container.navbar-container
       .navbar-header.pull-left
         a.navbar-brand(href='/#/', target='_top', ng-if='!params.logoFile') {{params.headerName}}
-            a.navbar-brand.navbar-brand-img(href='/#/', ng-if='params.logoFile')
-              img(alt='{{params.logoAlt}}', ng-src='{{params.logoFile}}')
+        a.navbar-brand.navbar-brand-img(href='/#/', ng-if='params.logoFile')
+          img(alt='{{params.logoAlt}}', ng-src='{{params.logoFile}}')
       button.navbar-toggle(type='button', ng-click='isCollapsed = !isCollapsed')
         span.icon-bar
         span.icon-bar
         span.icon-bar
-      .navbar-collapse(id=id, ng-class='{collapse: isCollapsed}', ng-init='isCollapsed = true', ng-click='isCollapsed = true')
+      .navbar-collapse(id='main_menu', ng-class='{collapse: isCollapsed}', ng-init='isCollapsed = true', ng-click='isCollapsed = true')
         ul.nav.navbar-nav
           block
         +nav_logout
 
 mixin nav_item(href, xAttrs)
   - xAttrs = xAttrs || {}
-  li()&attributes(xAttrs): a( href=href )
-    block
+  li&attributes(xAttrs)
+    a( href=href )
+      block
 
-mixin nav_item_dropdown(href, xAttrs)
-  li(uib-dropdown=true)
-    a(href=true,uib-dropdown-toggle=true,data-toggle='dropdown',ng-click="stopProp($event)")= attributes.label
-      b.caret
+mixin nav_item_dropdown(label, xAttrs)
+  - xAttrs = xAttrs || {}
+  li(uib-dropdown=true)&attributes(xAttrs)
+    a(href=true,uib-dropdown-toggle=true, data-toggle='dropdown', ng-click="stopProp($event)")= label
+      span.caret
     ul(uib-dropdown-menu=true)
       block
 
@@ -33,10 +36,9 @@ mixin nav_header
   li.dropdown-header
     block
 
-mixin nav_logout(xAttrs)
-  - xAttrs = xAttrs || {}
+mixin nav_logout
   ul.nav.navbar-nav.navbar-right()&attributes({"ng-if":'isLoggedIn()'})
-    +nav_item_dropdown("#")( label="{{ userName() }} ")
+    +nav_item_dropdown("{{ userName() }}")
       +nav_header Logged in as {{ userName() }}
       +nav_item( "#/changepassword" ) Change Password
       +nav_divider

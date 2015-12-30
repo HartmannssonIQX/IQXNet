@@ -13,26 +13,29 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
     title {{params.browserTitle}}
   body
     //- Blank navigation for when not logged in as it shows nothing otherwise :(
-    +nav("","",{})
+    +nav()
 
-    +nav("Candidate Navigation", "main_menu", {"ng-if":'userClass()==\'CANDIDATE\''})
+    //- Candidate menu
+    +nav({"ng-if":'userClass()==\'CANDIDATE\''})
       +nav_item( "/#/canddetails" ) Details
-      +nav_item( "/#/provtimesheets" ) Timesheets
-      +nav_item_dropdown( "#" )( label="Dropdown ")
-        +nav_item( "#/" ) Item 1
-        +nav_item( "#/" ) Item 2
-        +nav_item( "#/" ) Item 3
-        +nav_divider
-        +nav_header Header Item
-        +nav_item( "#" ) Item 4
-        +nav_item( "#" ) Item 6
+      +nav_item_dropdown( "Timesheets" )
+        +nav_item( "/#/provtimesheets", {"ng-if":'userHasRight(\'FILLTIMESHEETS\')'} ) Current
+        +nav_item( "/#/timesheets" ) Completed
       +nav_item( "/#/canddiary", {"ng-if":'userHasRight(\'DIARY\')'} ) Diary
       +nav_item( "/#/jobsearch", {"ng-if":'isSwitchedOn(\'JOBSEARCH\')'} ) Job Search
       +nav_item( "/#/canddocuments", {"ng-if":'userHasRight(\'DOCCANDDOWNLOAD\')'} ) Documents
 
-    +nav("Owner Navigation", "main_menu", {"ng-if":'userClass()==\'OWNER\''})
+    //- Client menu
+    +nav({"ng-if":'userClass()==\'CLIENT\''})
+      +nav_item_dropdown( "Timesheets" )
+        +nav_item( "/#/provtimesheets", {"ng-if":'userHasRight(\'FILLTIMESHEETS\')'} ) Current
+        +nav_item( "/#/timesheets" ) Completed
+
+    //- Owner menu
+    +nav({"ng-if":'userClass()==\'OWNER\''})
       +nav_item( "/#/serverstats" ) Stats
       +nav_item( "/#/apiprocs", {"ng-if":'userHasRight(\'APIDESIGN\') && isSwitchedOn(\'APIDESIGN\')'} ) API
+      +nav_item( "/#/jobsearch", {"ng-if":'userHasRight(\'TESTONLY\')'} ) Jobs
       +nav_item( "/#/test", {"ng-if":'userHasRight(\'TESTONLY\')'} ) Test
 
     .mynavspacer

@@ -30,8 +30,11 @@ mixin MiniForm(xAttrs)
     
 mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
       input.form-control(type=sType, id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
@@ -39,8 +42,11 @@ mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
     
 mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
       select.form-control(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
         each item in aChoices
@@ -50,8 +56,11 @@ mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
 
 mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
       p.input-group
         input.form-control(type='text', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', uib-datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions')&attributes(oAttrs)
@@ -63,8 +72,11 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
       
 mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10.checkbox
       input.form-control(type='checkbox', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
@@ -72,8 +84,11 @@ mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
     
 mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
       textarea.form-control(id=sID, name=sID, rows=nRows, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
@@ -81,7 +96,7 @@ mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
     
 mixin FormFile(sID,sLabel,oAttrs)
   .form-group
-    label.control-label.col-sm-2(for=sID)= sLabel
+    label.control-label.col-sm-2(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-10
       .form-control.btn.btn-success.btn-default(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', ngf-select='uploadSelect($files, $file, $event)', ngf-drop='uploadSelect($files, $file, $event)')&attributes(oAttrs) {{uploadFileName()}}
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
@@ -93,7 +108,7 @@ mixin FormFileUpload
       button.btn.btn-primary.btn-default(type='button', ng-click='uploadExecute()') Upload
       
 mixin Pager
-  pager(total-items='totalItems', items-per-page='itemsPerPage', ng-model='currentPage', ng-change='fetch()', align='false')
+  uib-pager(total-items='totalItems', items-per-page='itemsPerPage', ng-model='currentPage', ng-change='fetch()', align='false')
   
 mixin FormError
   .text-danger(ng-if='formError') {{ formError }}

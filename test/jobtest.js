@@ -30,9 +30,14 @@ describe('Jobrunner Tests', function(){
       ])
   })
   
+  it('WPK Switch', function(){
+    return expect(exec('IQXJob/Test0WPK','test.user.candidate',{},'string')).to.eventually.not.be.empty
+  })
+  
   it('Waits 1 Second', function(){
     return expect(exec('IQXJob/Test0sqlWait','test.user.candidate',{},'string')).to.eventually.be.above(999)
   })
+  
   
 
   

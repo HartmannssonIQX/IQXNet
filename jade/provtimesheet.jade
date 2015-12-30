@@ -2,11 +2,16 @@ include ./table-blocks.jade
 include ./standard-blocks.jade
 
 .container-fluid
-  h3 Timesheet {{ theRecord.serialnumber }} 
-  h4 {{ theRecord.position }} at {{ theRecord.companyname }}
+
+  //- Header ---------------------------------------------
+  h3 Timesheet {{ theRecord.serialnumber }} - {{ theRecord.weekenddate | date:'dd/MM/yy'}}
+  h4(ng-if="userClass()=='CANDIDATE'") {{ theRecord.position }} at {{ theRecord.companyname }}
+  h4(ng-if="userClass()=='CLIENT'") {{ theRecord.tempname }} as {{ theRecord.position }}
+  h4(ng-if="userClass()=='AGENCY'") {{ theRecord.tempname }} as {{ theRecord.position }} at {{ theRecord.companyname }}
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}
   
-  table.table.table-striped.table-condensed(ng-show='shiftTimesheet')
+  //- Shifts ----------------------------------------------
+  table.table.table-striped.table-condensed(ng-show='state.shiftTimesheet && state.showingDetails')
     thead
       tr
         th Shift Date
@@ -14,25 +19,23 @@ include ./standard-blocks.jade
         th To
         th.textright Break
         th.textright Hours
-        th
-        th
+        th(ng-show='!state.completed')
+        th(ng-show='!state.completed')
     tbody
-      tr(ng-repeat-start='shift in timesheetShifts',ng-if='!shift.bEditShift')
+      tr(ng-repeat-start='shift in timesheetShifts',ng-if='!shift.editing')
         td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
         td {{ shift.timefrom  | date:'HH:mm' }}
         td {{ shift.timeto | date:'HH:mm' }}
         td.textright {{ shift.breakminutes }}
         td.textright {{ shiftLength(shift) | number:2 }}
-        td
-          input(type='checkbox',ng-model='shift.tick',ng-click='uncompleteTimesheet()')
-        td
-          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='editShift(shift)') 
-            | Edit&nbsp;
+        td(ng-show='!state.completed')
+          input(type='checkbox',ng-model='shift.tick',ng-click='unCalculateTimesheet()')
+        td(ng-show='!state.completed')
+          button.btn.btn-sm.btn-primary(ng-show='!state.editing', ng-click='editShift(shift)') Edit&nbsp;
             span.glyphicon.glyphicon-edit
-          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='copyShift(shift)') 
-            | Copy&nbsp;
+          button.btn.btn-sm.btn-primary(ng-show='!state.editing', ng-click='copyShift(shift)') Copy&nbsp;
             span.glyphicon.glyphicon-duplicate
-      tr(ng-repeat-end,ng-if='shift.bEditShift')
+      tr(ng-repeat-end,ng-if='shift.editing')
         td(colspan=7, ng-form='shift.theForm')
           .iqx-center.well.well-sm
             +InlineDatePopup('shift','shiftdate',{required:true},'Shift Date',70)
@@ -53,23 +56,23 @@ include ./standard-blocks.jade
             button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel&nbsp;
               span.glyphicon.glyphicon-remove
           
-  table.table.table-striped.table-condensed(ng-show='timeTimesheet')
+  //- Times ---------------------------------------------------
+  table.table.table-striped.table-condensed(ng-show='state.timeTimesheet && state.showingDetails')
     thead
       tr
         th Date
         th From
         th.textright Hours
-        th
+        th(ng-show='!state.completed')
     tbody
-      tr(ng-repeat-start='shift in timesheetTimes',ng-if='!shift.bEditShift')
+      tr(ng-repeat-start='shift in timesheetTimes',ng-if='!shift.editing')
         td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
         td {{ shift.timefrom | date:'HH:mm' }}
         td.textright {{ shift.hours | number:2 }}
-        td
-          button.btn.btn-sm.btn-primary(ng-show='!bEditing', ng-click='editShift(shift)') 
-            | Edit&nbsp;
+        td(ng-show='!state.completed')
+          button.btn.btn-sm.btn-primary(ng-show='!state.editing', ng-click='editShift(shift)') Edit&nbsp;
             span.glyphicon.glyphicon-edit
-      tr(ng-repeat-end,ng-if='shift.bEditShift')
+      tr(ng-repeat-end,ng-if='shift.editing')
         td(colspan=4, ng-form='shift.theForm')
           .iqx-center.well.well-sm
             p(style='font-weight:bold;') {{ shift.shiftdate | date:'EEEE dd/MM/yyyy' }}
@@ -83,7 +86,7 @@ include ./standard-blocks.jade
                 tr
                   td
                     +InlineTimePopup('shift','timefrom',{required:true})
-                  td| &nbsp;
+                  td &nbsp;
                   td
                     +InlineSpinner('shift','hours',{min:0,step:'0.25',width:75})
           .iqx-center
@@ -93,10 +96,14 @@ include ./standard-blocks.jade
             button.btn.btn-sm.btn-primary(ng-click='unEditShift(shift)') Cancel&nbsp;
               span.glyphicon.glyphicon-remove
         
-  button.btn.btn-success.btn-default(ng-show='!bEditing', ng-click='calc()') Calculate&nbsp;
+  //- Middle buttons - Calculate and Show Details --------------------
+  button.btn.btn-success.btn-default(ng-show='!state.editing && !state.calculated', ng-click='calc()') Calculate&nbsp;
     span.glyphicon.glyphicon-cog
+  button.btn.btn-success.btn-default(ng-show='!state.showingDetails && (state.shiftTimesheet || state.timeTimesheet)', ng-click='showDetails()') Show Details&nbsp;
+    span.glyphicon.glyphicon-search
   
-  table.table.table-striped.table-condensed(ng-show='calculatedTimesheet')
+  //- Rates -----------------------------------------------------
+  table.table.table-striped.table-condensed(ng-show='state.calculated')
     thead
       tr
         th Pay Type
@@ -104,16 +111,61 @@ include ./standard-blocks.jade
         th.textright Units
         th.textright Rate
         th.textright Total
+        th(ng-show='!state.completed')
     tbody
-      tr(ng-repeat='rate in timesheetRates')
+      tr(ng-repeat-start='rate in timesheetRates', ng-if='!rate.editing')
         td {{ rate.BandDescription }}
         td {{ rate.UnitDescription }}
         td.textright {{ rate.Units | number:2 }}
         td.textright {{ rate.Rate | number:2 }}
         td.textright {{ rate.Total | number:2 }}
-        
-  +Container({'ng-class':"{'form-horizontal':true}",'ng-show':'calculatedTimesheet && theRecord.theirrefrequired','ng-form':'theForm'})
-    +FormField('text','theirref','Reference',{'required':true,'ng-disabled':false})
-        
-  .text-danger(ng-if='formError') {{ formError }}
+        td(ng-show='!state.completed')
+          button.btn.btn-sm.btn-primary(ng-show='rate.CanEdit && !state.editing', ng-click='editRate(rate)') Edit&nbsp;
+            span.glyphicon.glyphicon-edit
+          button.btn.btn-sm.btn-primary(ng-show='rate.IsExpenses && !state.editing', ng-click='copyRate(rate)') Copy&nbsp;
+            span.glyphicon.glyphicon-duplicate
+      tr(ng-repeat-end, ng-if='rate.editing')
+        td(colspan=6, ng-form='rate.theForm')
+          .iqx-center.well.well-sm
+            table.iqx-input-table
+              thead
+                tr
+                  th.textcentre(colspan=2) {{ rate.BandDescription }}
+              tbody
+                tr
+                  th.textright Unit&nbsp;
+                  td.textcentre(ng-if='!rate.IsExpenses') {{ rate.UnitDescription }}
+                  td(ng-if='rate.IsExpenses')
+                    +InlineField('text','rate','UnitDescription',{required:true})
+                tr
+                  th.textright Units&nbsp;
+                  td
+                    +InlineField('number','rate','Units',{min:0,step:'0.25'})
+                tr
+                  th.textright Rate&nbsp;
+                  td.textcentre(ng-if='!rate.IsExpenses') {{ rate.Rate | number:2 }}
+                  td(ng-if='rate.IsExpenses')
+                    +InlineField('number','rate','Rate',{min:0})
+          .iqx-center
+            .text-danger(ng-if='rate.formError') {{ rate.formError }}
+            button.btn.btn-sm.btn-primary(ng-click='saveRate(rate)') Ok&nbsp;
+              span.glyphicon.glyphicon-ok
+            button.btn.btn-sm.btn-primary(ng-click='unEditRate(rate)') Cancel&nbsp;
+              span.glyphicon.glyphicon-remove
+
+  //- Additional data - Their Ref., Questionnaire etc. -------------------------
+  +Container({'ng-class':"{'form-horizontal':true}",'ng-show':'state.calculated','ng-form':'theForm'})
+    +FormField('text','theirref','Reference',{'ng-required':'theRecord.theirrefrequired','class':'uppercase'},{'ng-show':'state.canEditTheirRef'})
+    iqx-questionnaire(questions='tags')
+
+  
+  //- Footer - error message and buttons
+  .col-xs-12.text-danger(ng-if='formError') {{ formError }}
+  button.btn.btn-success.btn-default(type='button', ng-show='state.calculated && !state.completed', ng-click='complete()') Complete&nbsp;
+    span.glyphicon.glyphicon-share
+  button.btn.btn-success.btn-default(type='button', ng-show='state.completed', ng-click='undo()') Edit&nbsp;
+    span.glyphicon.glyphicon-edit
+  button.btn.btn-success.btn-default(type='button', ng-if='state.calculated && state.allowedToAuthorise', ng-click='authorise()') {{state.completed?'':'Complete and '}}Authorise&nbsp;
+    span.glyphicon.glyphicon-check
+    
         
