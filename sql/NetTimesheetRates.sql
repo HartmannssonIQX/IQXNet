@@ -1,5 +1,5 @@
 create procedure pears.NetTimesheetRates(in pWebUserID char(20),in pTempTimesheetID char(20))
-result(TempTimesheetLineID char(20),IsExpenses smallint,BandDescription char(50),UnitDescription char(100),Units decimal(12,2),Rate decimal(12,2),Total decimal(12,2),Rate2 decimal(12,2),Total2 decimal(12,2))
+result(TempTimesheetLineID char(20),IsExpenses smallint,BandDescription char(50),UnitDescription char(100),Units decimal(12,2),Rate decimal(12,2),Total decimal(12,2),Rate2 decimal(12,2),Total2 decimal(12,2),ShiftDate date)
 // IQXWeb
 begin
   declare uclass char(20);
@@ -10,7 +10,8 @@ begin
       (if isnull(temppayband.payrollflag,'') = 'EXPENSES' or isnull(temppayband.isexpenses,0) = 1 then 1 else 0
       endif) as IsExpenses,temppayband.description,
       (if IsExpenses = 1 then temptimesheetline.description else temppayband.unit
-      endif),nullif(temptimesheetline.unitscharged,0.0) as units,nullif(temptimesheetline.chargerate,0.0) as rate,isnull(units*rate,0.0) as total,null,null
+      endif),nullif(temptimesheetline.unitscharged,0.0) as units,nullif(temptimesheetline.chargerate,0.0) as rate,isnull(units*rate,0.0) as total,null,null,
+	  date(temptimesheetline.shifttime)
       from temptimesheetline key join temppayband where temptimesheetline.temptimesheetid = pTempTimesheetID order by
       temptimesheetline.linenumber asc
   else if uclass = 'OWNER' then
@@ -19,7 +20,8 @@ begin
         endif) as IsExpenses,temppayband.description,
         (if IsExpenses = 1 then temptimesheetline.description else temppayband.unit
         endif),nullif(temptimesheetline.unitspaid,0.0) as units,nullif(temptimesheetline.payrate,0.0) as rate,isnull(units*rate,0.0) as total,
-        nullif(temptimesheetline.chargerate,0.0) as rate2,isnull(units*rate2,0.0) as total2
+        nullif(temptimesheetline.chargerate,0.0) as rate2,isnull(units*rate2,0.0) as total2,
+		date(temptimesheetline.shifttime)
         from temptimesheetline key join temppayband where temptimesheetline.temptimesheetid = pTempTimesheetID order by
         temptimesheetline.linenumber asc
     else
@@ -27,7 +29,8 @@ begin
         (if isnull(temppayband.payrollflag,'') = 'EXPENSES' or isnull(temppayband.isexpenses,0) = 1 then 1 else 0
         endif) as IsExpenses,temppayband.description,
         (if IsExpenses = 1 then temptimesheetline.description else temppayband.unit
-        endif),nullif(temptimesheetline.unitspaid,0.0) as units,nullif(temptimesheetline.payrate,0.0) as rate,isnull(units*rate,0.0) as total,null,null
+        endif),nullif(temptimesheetline.unitspaid,0.0) as units,nullif(temptimesheetline.payrate,0.0) as rate,isnull(units*rate,0.0) as total,null,null,
+		date(temptimesheetline.shifttime)
         from temptimesheetline key join temppayband where temptimesheetline.temptimesheetid = pTempTimesheetID order by
         temptimesheetline.linenumber asc
     end if

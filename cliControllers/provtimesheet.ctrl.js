@@ -20,6 +20,14 @@ angular.module('app')
   
   $scope.fetchTimesheet=function() { // Fetch the timesheet header
     return $scope.fetch()  // The primary fetch using the scope options above
+    .then(function(){
+      if ($scope.theRecord.tempprovtimesheetid){
+        $scope.state.loaded=true
+      } else {
+        $scope.state.loaded=false
+        return $q.reject($scope.formError='Timesheet not found')
+      }
+    })
     }
   
   $scope.fetchTimesheetShifts=function() {
@@ -45,7 +53,8 @@ angular.module('app')
   
   $scope.load=function() { // Load whole timesheet
     $scope.theRecord={}
-    $scope.state={calculated:false, // The calculated timesheet lines/rates are available
+    $scope.state={loaded:false, // The provisional timesheet was successfully loaded
+                  calculated:false, // The calculated timesheet lines/rates are available
                   completed:false, // Timesheet has been flagged as completed
                   showingDetails:true, // Display the shifts/time details
                   shiftTimesheet:false, // This is a shift timesheet
@@ -94,6 +103,7 @@ angular.module('app')
     if (newSh.tempshiftid.substr(0,5)!=='Copy_') {
       newSh.tempshiftid='Copy_'+newSh.tempshiftid
       }
+    newSh.referencecode=''
     $scope.state.copying=true
     $scope.timesheetShifts.push(newSh)  
     $scope.editShift(newSh)
@@ -104,7 +114,8 @@ angular.module('app')
             pshiftdate:ApiSvc.DateToString(sh.shiftdate),
             ptimefrom:ApiSvc.TimeToString(sh.timefrom),
             ptimeto:ApiSvc.TimeToString(sh.timeto),
-            pbreakminutes:sh.breakminutes
+            pbreakminutes:sh.breakminutes,
+            preferencecode:sh.referencecode
             }
   }
   

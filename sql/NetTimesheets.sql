@@ -1,5 +1,5 @@
 create PROCEDURE pears."NetTimesheets"(in pWebUserID char(20),in pSlice integer default 0,in pSliceSize integer default 20)
-result(temptimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),weekenddate date,timesheettype char(1),timesheettotal double,companyaddress char(250),theirref char(50))
+result(temptimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),weekenddate date,timesheettype char(1),timesheettotal double,companyaddress char(250),theirref char(50), payrollnumber char(20))
 // IQXWeb
 begin
   declare userClass char(20);
@@ -18,7 +18,7 @@ begin
       else 'C'
       endif
       endif as timesheettype,(select sum(unitspaid*payrate) from temptimesheetline where temptimesheetid = t.temptimesheetid) as timesheettotal,'' as CompanyAddress,
-      t.theirref
+      t.theirref, person.payrollnumber
       from temptimesheet as t key join placement key join vacancy key join employment key join company
       ,temptimesheet as t key join tempdesk
       ,temptimesheet as t key join person key join iqxnetuserlink
@@ -33,7 +33,7 @@ begin
         else 'C'
         endif
         endif as timesheettype,(select sum(unitspaid*payrate) from temptimesheetline where temptimesheetid = t.temptimesheetid) as timesheettotal,'' as CompanyAddress,
-        t.theirref
+        t.theirref, person.payrollnumber
         from temptimesheet as t key join placement key join vacancy key join employment key join company
         ,temptimesheet as t key join tempdesk
         ,temptimesheet as t key join person key join pay_employee key join company as agcomp key join employment as agemp key join iqxnetuserlink
@@ -49,7 +49,7 @@ begin
           else 'C'
           endif
           endif as timesheettype,(select sum(unitspaid*payrate) from temptimesheetline where temptimesheetid = t.temptimesheetid) as timesheettotal,'' as CompanyAddress,
-          t.theirref
+          t.theirref, person.payrollnumber
           from temptimesheet as t key join placement key join vacancy key join employment key join company
           ,temptimesheet as t key join tempdesk
           ,temptimesheet as t key join person
@@ -67,7 +67,7 @@ begin
           endif as timesheettype,(select sum(unitscharged*chargerate) from temptimesheetline where temptimesheetid = t.temptimesheetid) as timesheettotal,
           (if @companycount > 1 then GetCompanyAddressOnLine(company.companyid)
           else ''
-          endif) as CompanyAddress,t.theirref
+          endif) as CompanyAddress,t.theirref, person.payrollnumber
         from temptimesheet as t key join placement key join vacancy key join employment key join company key join employment as allemps key join iqxnetuserlink
         ,temptimesheet as t key join tempdesk
         ,temptimesheet as t key join person

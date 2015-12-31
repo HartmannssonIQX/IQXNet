@@ -3,15 +3,15 @@
     thead
       tr
         th Number
-        th Temp
+        th(ng-if="userClass()!='CANDIDATE'") Temp
         th Client
         th Position
         th End Date
     tbody
       tr.drillable(ng-repeat='timesheet in theRecords', ng-click='expandTimesheet(timesheet.tempprovtimesheetid)')
         td {{ timesheet.serialnumber }}
-        td {{ timesheet.tempname }}
-        td {{ timesheet.companyname }}
+        td(ng-if="userClass()!='CANDIDATE'") {{ timesheet.tempname }}
+        td {{ timesheet.companyname }}{{ timesheet.companyaddress?',':'' }} {{ timesheet.companyaddress }}
         td {{ timesheet.position }}
         td {{ timesheet.weekenddate | date:'dd/MM/yyyy' }}
   .col-xs-12.text-danger(ng-if='formError') {{ formError }}

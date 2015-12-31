@@ -4,17 +4,18 @@ include ./standard-blocks.jade
 .container-fluid
 
   //- Header ---------------------------------------------
-  h3 Timesheet {{ theRecord.serialnumber }} - {{ theRecord.weekenddate | date:'dd/MM/yy'}}
-  h4(ng-if="userClass()=='CANDIDATE'") {{ theRecord.position }} at {{ theRecord.companyname }}
-  h4(ng-if="userClass()=='CLIENT'") {{ theRecord.tempname }} as {{ theRecord.position }}
-  h4(ng-if="userClass()=='AGENCY'") {{ theRecord.tempname }} as {{ theRecord.position }} at {{ theRecord.companyname }}
-  .col-xs-12.text-danger(ng-if='formError') {{ formError }}
+  div(ng-show='state.loaded')
+    h3 Timesheet {{ theRecord.serialnumber }} - {{ theRecord.weekenddate | date:'dd/MM/yy'}}
+    h4(ng-if="userClass()=='CANDIDATE'") {{ theRecord.position }} at {{ theRecord.companyname }}
+    h4(ng-if="userClass()=='CLIENT'") {{ theRecord.tempname }} ({{ theRecord.payrollnumber }}) as {{ theRecord.position }}
+    h4(ng-if="userClass()=='AGENCY'") {{ theRecord.tempname }} ({{ theRecord.payrollnumber }}) as {{ theRecord.position }} at {{ theRecord.companyname }}
+    .col-xs-12.text-danger(ng-if='formError') {{ formError }}
   
   //- Shifts ----------------------------------------------
   table.table.table-striped.table-condensed(ng-show='state.shiftTimesheet && state.showingDetails')
     thead
       tr
-        th Shift Date
+        th Shift
         th From
         th To
         th.textright Break
@@ -23,7 +24,7 @@ include ./standard-blocks.jade
         th(ng-show='!state.completed')
     tbody
       tr(ng-repeat-start='shift in timesheetShifts',ng-if='!shift.editing')
-        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
+        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }} {{ shift.referencecode }}
         td {{ shift.timefrom  | date:'HH:mm' }}
         td {{ shift.timeto | date:'HH:mm' }}
         td.textright {{ shift.breakminutes }}
@@ -37,6 +38,8 @@ include ./standard-blocks.jade
             span.glyphicon.glyphicon-duplicate
       tr(ng-repeat-end,ng-if='shift.editing')
         td(colspan=7, ng-form='shift.theForm')
+          .iqx-center.well.well-sm(ng-if='state.canEditTheirRef')
+            +LabelledInlineField('text','shift','referencecode',{'class':'uppercase'},'Reference')
           .iqx-center.well.well-sm
             +InlineDatePopup('shift','shiftdate',{required:true},'Shift Date',70)
           .iqx-center.well.well-sm
@@ -97,15 +100,16 @@ include ./standard-blocks.jade
               span.glyphicon.glyphicon-remove
         
   //- Middle buttons - Calculate and Show Details --------------------
-  button.btn.btn-success.btn-default(ng-show='!state.editing && !state.calculated', ng-click='calc()') Calculate&nbsp;
+  button.btn.btn-success.btn-default(ng-show='state.loaded && !state.editing && !state.calculated', ng-click='calc()') Calculate&nbsp;
     span.glyphicon.glyphicon-cog
-  button.btn.btn-success.btn-default(ng-show='!state.showingDetails && (state.shiftTimesheet || state.timeTimesheet)', ng-click='showDetails()') Show Details&nbsp;
+  button.btn.btn-success.btn-default(ng-show='state.loaded && !state.showingDetails && (state.shiftTimesheet || state.timeTimesheet)', ng-click='showDetails()') Show Details&nbsp;
     span.glyphicon.glyphicon-search
   
   //- Rates -----------------------------------------------------
   table.table.table-striped.table-condensed(ng-show='state.calculated')
     thead
       tr
+        th(ng-if='state.shiftTimesheet') Date
         th Pay Type
         th Unit
         th.textright Units
@@ -114,6 +118,7 @@ include ./standard-blocks.jade
         th(ng-show='!state.completed')
     tbody
       tr(ng-repeat-start='rate in timesheetRates', ng-if='!rate.editing')
+        td(ng-if='state.shiftTimesheet') {{ rate.ShiftDate }}
         td {{ rate.BandDescription }}
         td {{ rate.UnitDescription }}
         td.textright {{ rate.Units | number:2 }}
@@ -125,7 +130,7 @@ include ./standard-blocks.jade
           button.btn.btn-sm.btn-primary(ng-show='rate.IsExpenses && !state.editing', ng-click='copyRate(rate)') Copy&nbsp;
             span.glyphicon.glyphicon-duplicate
       tr(ng-repeat-end, ng-if='rate.editing')
-        td(colspan=6, ng-form='rate.theForm')
+        td(colspan=10, ng-form='rate.theForm')
           .iqx-center.well.well-sm
             table.iqx-input-table
               thead
@@ -133,7 +138,7 @@ include ./standard-blocks.jade
                   th.textcentre(colspan=2) {{ rate.BandDescription }}
               tbody
                 tr
-                  th.textright Unit&nbsp;
+                  th.textright Item&nbsp;
                   td.textcentre(ng-if='!rate.IsExpenses') {{ rate.UnitDescription }}
                   td(ng-if='rate.IsExpenses')
                     +InlineField('text','rate','UnitDescription',{required:true})

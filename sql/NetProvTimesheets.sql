@@ -1,5 +1,5 @@
 create PROCEDURE pears."NetProvTimesheets"(in pWebUserID char(20))
-result(tempprovtimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),companyaddress char(120),weekenddate date,timesheettype char(1),completed smallint,theirref char(100),theirrefrequired smallint)
+result(tempprovtimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),companyaddress char(120),weekenddate date,timesheettype char(1),completed smallint,theirref char(100),theirrefrequired smallint, payrollnumber char(20))
 // IQXWeb
 begin
   declare userClass char(20);
@@ -16,7 +16,7 @@ begin
     endif
     endif
     endif as timesheettype,if t.extnumber = 2 then 1 else 0
-    endif as completed, '' as theirref, 0 as theirrefrequired
+    endif as completed, '' as theirref, 0 as theirrefrequired, person.payrollnumber
     from tempprovtimesheet as t key join vacancy key join employment key join company,tempprovtimesheet as t
     key join tempdesk,tempprovtimesheet as t key join person key join iqxnetuserlink
     where iqxnetuserlink.iqxnetuserid = pWebUserID and t.extnumber > 0
@@ -34,7 +34,7 @@ begin
     endif
     endif
     endif as timesheettype,if t.extnumber = 2 then 1 else 0
-    endif as completed, '' as theirref, 0 as theirrefrequired 
+    endif as completed, '' as theirref, 0 as theirrefrequired, person.payrollnumber 
     from tempprovtimesheet as t key join vacancy key join employment key join company,tempprovtimesheet as t
     key join tempdesk,tempprovtimesheet as t key join person key join pay_employee key join company as agcomp key join employment as agemp key join iqxnetuserlink
     where iqxnetuserlink.iqxnetuserid = pWebUserID and t.extnumber > 0
@@ -54,7 +54,7 @@ begin
     endif
     endif as timesheettype,if t.extnumber = 2 then 1 else 0
     endif as completed,isnull(t.theirref,GetPlacementTheirRef(person.personid,vacancy.vacancyid)) as theirref,
-    companyaccount.theirrefrequired
+    companyaccount.theirrefrequired, person.payrollnumber
     from tempprovtimesheet as t key join vacancy key join employment key join company key join employment as allemps key join iqxnetuserlink
     ,tempprovtimesheet as t key join tempdesk
     ,tempprovtimesheet as t key join person
