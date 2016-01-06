@@ -32,5 +32,5 @@ describe('Hub test', function(){
       ])
     })
   })
-  
+   
 
