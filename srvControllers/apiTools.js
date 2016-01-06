@@ -97,6 +97,7 @@ apiTools.buildOptions = function (hdrs,qry) {
     if (!contentType || contentType=='application/json') {contentType='application/x-www-form-urlencoded'}
     opts.headers={'Content-Type': contentType + '; ' + charset}  // NB note the case of Content-Type - content-type breaks Needle charset transmission
     }
+  opts.rejectUnauthorized = false  // Otherwise it fails if IQXHub has a self-signed certificate which is perfectly adequate for encrypting node<->hub traffic
   return opts
   }
   

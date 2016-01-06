@@ -1,6 +1,7 @@
 var needle = require('needle')
 var xml2js = require('xml2js')
 var parser = new xml2js.Parser({trim:true,explicitArray:false,attrkey:'attrs',charkey:'message'})
+var config=require('../config')
 
 var Q = require('q')
 
@@ -12,7 +13,7 @@ var chai=require('chai')
 chai.use(require('chai-as-promised'))
 var expect=chai.expect
 
-var desres=needleGet('http://localhost:54000/IQXService_/Test', {username: 'ADMINISTRATOR', password: 'pa55word', parse:false})
+var desres=needleGet(config.iqxHubURL+'IQXService_/Test', {username: 'ADMINISTRATOR', password: 'pa55word', parse:false, rejectUnauthorized:false})
   .then(function(response) {
     response=response[0]
     return parserjs(response.body)
