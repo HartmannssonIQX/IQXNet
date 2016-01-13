@@ -7,4 +7,20 @@ h2.textcentre Job Search
       label.control-label.col-sm-2(for='{{crit.name}}') {{crit.caption}}
       .col-sm-10
         select.form-control(id='{{crit.name}}', name='{{crit.name}}', ng-model='crit.value', ng-options='option.value as option.description for option in crit.options')
-
+  table.table.table-striped(ng-show='showResults')
+    thead
+      tr
+        th Position
+        th Branch
+        th Contact
+        th Start date
+    tbody
+      tr(ng-repeat='job in theResults | orderBy:sortProc')
+        td {{ job.position }}
+        td {{ job.branch }}
+        td {{ job.contactName }}
+        td {{ job.startDate }}        
+    tfoot
+      tr
+        th(colspan=2) Total
+        th.textright {{numberOfResults}}
