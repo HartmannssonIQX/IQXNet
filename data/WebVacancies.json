@@ -74,11 +74,11 @@
    "class":"",
    "options":[
     {
-     "value":"$NONE$",
+     "value":"Daily",
      "description":"Daily"
     },
     {
-     "value":"L",
+     "value":"Long Term",
      "description":"Long Term"
     }
    ]

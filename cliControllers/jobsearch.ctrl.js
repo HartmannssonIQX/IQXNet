@@ -8,12 +8,31 @@ angular.module('app')
       notLoggedIn:true, // New candidate so obviously not yet logged in
       autoEdit:true, // Switch form straight to edit mode
       saveCleanFields:true, // All fields sent, whether or not dirty
-      savePrefix:'p'
+      savePrefix:'p',
+      showResults:false,
+      theResults:{},
+      numberOfResults:0      // why is showResults undefined even though it is set to 0?
       })
      
 
     $scope.saveButtonCaption='Search'
     
+    $scope.update=function() {
+      var postData={}
+      angular.forEach($scope.theRecords, function(val) {
+        postData[val.name]=val.value
+        //console.log(val.value)
+      })
+      $scope.exec('jobs/searchJobs',postData)
+      .then(function(jobs) {
+        //console.log(jobs)
+        $scope.theResults=jobs.IQXResult.Row
+        $scope.numberOfResults=$scope.theResults.length
+        $scope.showResults=($scope.numberOfResults>0)
+      })
+      return postData
+    }
+		$scope.criteria={}
     $scope.fetch()  // Initialise
    
 })

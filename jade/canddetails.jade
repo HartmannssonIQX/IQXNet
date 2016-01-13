@@ -7,6 +7,7 @@ include ./standard-blocks.jade
     .mysmallspacer
     +FormField('text','Forenames','Forenames',{'required':true})
     +FormField('text','Surname','Surname',{'required':true})
+    +FormField('text','LoginID','Login name',{'required':true})
     +FormSelect('Gender','Gender',[{'Value':'M','Descrip':'Male'},{'Value':'F','Descrip':'Female'}],{})
     +FormDatePopup('DOB','Date of Birth',{'required':true})
     +FormField('text','Mobile','Mobile',{})
