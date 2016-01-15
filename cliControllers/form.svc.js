@@ -117,12 +117,12 @@ angular.module('app')
     scope.$broadcast('isSubmitted',bOn)
     }
       
-  svc.update=function (scope, bSaveOnly) {
+  svc.update=function (scope, bSaveOnly, bNoValidate) {
       scope.formError=''
       if (!scope.isEditing) {return $q.when()}  // Returns a resolved promise so that it can be 'then'ed
       if (!scope.FormSvcOptions.saveAPI) {return $q.reject(scope.formError='No saveAPI in form service options')}
       svc.setSubmitted(scope,true)
-      if (scope.theForm.$valid || !bSaveOnly) {
+      if (scope.theForm.$valid || bNoValidate) {
         var changes=false
         var postvars={}
         angular.forEach(scope.theRecord, function (value,key) {
