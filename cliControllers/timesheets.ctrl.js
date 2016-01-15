@@ -3,8 +3,7 @@ angular.module('app')
   FormSvc.setOptions($scope,{
       fetchAPI:'callresult/nettimesheets',
       dateFields:['weekenddate'],
-      multiRow:true,
-      sliceSize:20
+      multiRow:true
       })
     
   $scope.expandTimesheet=function(tsid) {

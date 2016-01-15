@@ -1,0 +1,7 @@
+include ./standard-blocks.jade
+h3 {{theRecord.departmentname}}
++Container
+  +Form
+    +FormCheckbox('temp','Seeking Temp Jobs',{})
+    +FormCheckbox('perm','Seeking Perm Jobs',{})
+    iqx-questionnaire(questions='tags')
