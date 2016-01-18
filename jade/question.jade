@@ -1,6 +1,6 @@
 .form-group(ng-class="{'input-required':tag.required}", ng-attr-data-required="{{ tag.required ? 'required' : '' }}")
-  label.control-label.col-sm-2(for="{{tag.id}}", ng-class="{requiredLabel:isEditing}") {{tag.description}}
-  .col-sm-10(ng-switch="tag.tagtype")
+  label.control-label.col-sm-4(for="{{tag.id}}", ng-class="{requiredLabel:isEditing}") {{tag.description}}
+  .col-sm-8(ng-switch="tag.tagtype")
     input.form-control(ng-switch-when="T", type="text", id="{{tag.id}}", name="{{tag.id}}", ng-disabled='!isEditing', ng-model='tag.value', ng-required='tag.required')
     input.form-control.uppercase(ng-switch-when="U", type="text", id="{{tag.id}}", name="{{tag.id}}", ng-disabled='!isEditing', ng-model='tag.value', ng-required='tag.required')
     input.form-control(ng-switch-when="N", type="number", id="{{tag.id}}", name="{{tag.id}}", ng-disabled='!isEditing', ng-model='tag.value', ng-required='tag.required')
