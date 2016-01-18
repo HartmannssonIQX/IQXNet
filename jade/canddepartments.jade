@@ -1,0 +1,15 @@
+include ./standard-blocks.jade
+
+.container-fluid
+  table.table.table-striped
+    thead
+      tr
+        th Department
+        th Registration
+    tbody
+      tr.drillable(ng-repeat='dept in theRecords', ng-click='expandDepartment(dept.DepartmentID)')
+        td {{ dept.DepartmentName }}
+        td {{ dept.Details }}
+
+  .col-xs-12.text-danger(ng-if='formError') {{ formError }}
+  

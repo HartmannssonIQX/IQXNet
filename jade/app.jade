@@ -18,12 +18,13 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
     //- Candidate menu
     +nav({"ng-if":'userClass()==\'CANDIDATE\''})
       +nav_item( "/#/canddetails" ) Details
+      +nav_item( "/#/canddepartments") Registration 
+      +nav_item( "/#/canddocuments", {"ng-if":'userHasRight(\'DOCCANDDOWNLOAD\')'} ) Documents
       +nav_item_dropdown( "Timesheets" )
         +nav_item( "/#/provtimesheets", {"ng-if":'userHasRight(\'FILLTIMESHEETS\')'} ) Current
         +nav_item( "/#/timesheets" ) Completed
       +nav_item( "/#/canddiary", {"ng-if":'userHasRight(\'DIARY\')'} ) Diary
       +nav_item( "/#/jobsearch", {"ng-if":'isSwitchedOn(\'JOBSEARCH\')'} ) Job Search
-      +nav_item( "/#/canddocuments", {"ng-if":'userHasRight(\'DOCCANDDOWNLOAD\')'} ) Documents
 
     //- Client menu
     +nav({"ng-if":'userClass()==\'CLIENT\''})
