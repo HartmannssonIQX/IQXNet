@@ -1,4 +1,4 @@
-create procedure pears.NetProvTimesheetShiftSet(in pWebUserID char(20),in ptempshiftid char(250),in pshiftdate char(250) default 'NOT_SET',in ptimefrom char(250) default 'NOT_SET',in ptimeto char(250) default 'NOT_SET',in pbreakminutes char(250) default 'NOT_SET')
+create procedure pears.NetProvTimesheetShiftSet(in pWebUserID char(20),in ptempshiftid char(250),in pshiftdate char(250) default 'NOT_SET',in ptimefrom char(250) default 'NOT_SET',in ptimeto char(250) default 'NOT_SET',in pbreakminutes char(250) default 'NOT_SET', in preferencecode char(20) default null)
 result(pResult char(250))
 // IQXWeb
 begin
@@ -13,6 +13,7 @@ begin
   if trim(pbreakminutes) = '' then
     set pbreakminutes='0'
   end if;
+  set preferencecode=ucase(preferencecode);
   if ptempshiftid like 'Copy%' then
     set isnewshift=1
   else
@@ -43,21 +44,25 @@ begin
   end if;
   if isnewshift = 1 then
     set newshiftid=uniquekey(ptempshiftid);
+    if trim(preferencecode)='' then
+      set preferencecode=null
+    end if;
     insert into tempshiftplan( TempShiftPlanID,VacancyID,ShiftDate,TimeFrom,TimeTo,BreakMinutes,Description,EssentialSkill,EssentialSkillGradeID,ReferenceCode,
       EssentialSkillChoiceList,TempShiftTypeID,AnalysisCode,RecoveryHours) 
       select newshiftid,VacancyID,isnull(iqxnetstringtodate(pshiftdate),shiftdate),isnull(iqxnetstringtotime(ptimefrom),timefrom),
-        isnull(iqxnetstringtotime(ptimeto),timeto),isnull(iqxnetstringtointeger(pbreakminutes),breakminutes),Description,EssentialSkill,EssentialSkillGradeID,'Self-booked',
+        isnull(iqxnetstringtotime(ptimeto),timeto),isnull(iqxnetstringtointeger(pbreakminutes),breakminutes),Description,EssentialSkill,EssentialSkillGradeID,isnull(preferencecode,'Self-booked'),
         EssentialSkillChoiceList,TempShiftTypeID,AnalysisCode,RecoveryHours from tempshiftplan
         where tempshiftplanid = (select tempshiftplanid from tempshift where tempshiftid = ptempshiftid);
     insert into tempshift( TempShiftID,VacancyID,PersonID,PlacementID,ShiftDate,TimeFrom,TimeTo,BreakMinutes,State,TempShiftPlanID,EssentialSkillGradeID,ReferenceCode,
       ClientConfirmed,TempConfirmed,TempShiftTypeID,AnalysisCode,RecoveryHours) 
       select NewShiftID,VacancyID,PersonID,PlacementID,isnull(iqxnetstringtodate(pshiftdate),shiftdate),isnull(iqxnetstringtotime(ptimefrom),timefrom),
-        isnull(iqxnetstringtotime(ptimeto),timeto),isnull(iqxnetstringtointeger(pbreakminutes),breakminutes),'B',NewShiftID,EssentialSkillGradeID,'Self-booked',
+        isnull(iqxnetstringtotime(ptimeto),timeto),isnull(iqxnetstringtointeger(pbreakminutes),breakminutes),'B',NewShiftID,EssentialSkillGradeID,isnull(preferencecode,'Self-booked'),
         1,1,TempShiftTypeID,AnalysisCode,RecoveryHours from tempshift
         where tempshiftid = ptempshiftid
   else
     update tempshift set shiftdate = isnull(iqxnetstringtodate(pshiftdate),shiftdate),timefrom = isnull(iqxnetstringtotime(ptimefrom),timefrom),
-      timeto = isnull(iqxnetstringtotime(ptimeto),timeto),breakminutes = isnull(iqxnetstringtointeger(pbreakminutes),breakminutes)
+      timeto = isnull(iqxnetstringtotime(ptimeto),timeto),breakminutes = isnull(iqxnetstringtointeger(pbreakminutes),breakminutes),
+      ReferenceCode = isnull(preferencecode,ReferenceCode)
       where tempshiftid = ptempshiftid
   end if;
   select '0:~Success'

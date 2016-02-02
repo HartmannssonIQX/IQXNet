@@ -1,5 +1,5 @@
 create procedure pears.NetProvTimesheet( in pWebUserID char(20),in pTempProvTimesheetID char(20) ) 
-result( tempprovtimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),companyaddress char(120),weekenddate date,timesheettype char(1),completed smallint,theirref char(100),theirrefrequired smallint,completedby char(50),completedat char(20) ) 
+result( tempprovtimesheetid char(20),serialnumber char(20),tempname char(60),position char(60),companyname char(60),companyaddress char(120),weekenddate date,timesheettype char(1),completed smallint,theirref char(100),theirrefrequired smallint,completedby char(50),completedat char(20), payrollnumber char(20) ) 
 // IQXWeb
 begin
   declare userClass char(20);
@@ -19,7 +19,7 @@ begin
     isnull(t.theirref,GetPlacementTheirRef(person.personid,vacancy.vacancyid)) as theirref,
     if userClass='CLIENT' then companyaccount.theirrefrequired else 0 endif,
     (select first i.name from tempprovtimesheethistory as h join iqxnetuser as i on h.externaluserid = i.iqxnetuserid
-      where h.tempprovtimesheetid = t.tempprovtimesheetid and h.newstatus = 100) as completedby,'' as completedat
+      where h.tempprovtimesheetid = t.tempprovtimesheetid and h.newstatus = 100) as completedby,'' as completedat, person.payrollnumber
     from tempprovtimesheet as t key join vacancy key join employment key join company
       ,tempprovtimesheet as t key join tempdesk
       ,tempprovtimesheet as t key join person

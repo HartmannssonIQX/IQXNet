@@ -3,8 +3,8 @@ include ./standard-blocks.jade
 .container-fluid
   h3 Timesheet {{ timesheet.serialnumber }} - {{ timesheet.weekenddate | date:'dd/MM/yy'}}
   h4(ng-if="userClass()=='CANDIDATE'") {{ timesheet.position }} at {{ timesheet.companyname }}
-  h4(ng-if="userClass()=='CLIENT'") {{ timesheet.tempname }} as {{ timesheet.position }}
-  h4(ng-if="userClass()=='AGENCY'") {{ timesheet.tempname }} as {{ timesheet.position }} at {{ timesheet.companyname }}
+  h4(ng-if="userClass()=='CLIENT'") {{ timesheet.tempname }} ({{ timesheet.payrollnumber }}) as {{ timesheet.position }}
+  h4(ng-if="userClass()=='AGENCY'") {{ timesheet.tempname }} ({{ timesheet.payrollnumber }}) as {{ timesheet.position }} at {{ timesheet.companyname }}
   
   table.table.table-striped(ng-show='shiftTimesheet')
     thead
@@ -16,7 +16,7 @@ include ./standard-blocks.jade
         th.textright Hours
     tbody
       tr(ng-repeat='shift in timesheetShifts')
-        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }}
+        td {{ shift.shiftdate | date:'EEE dd/MM/yy' }} {{ shift.referencecode }}
         td {{ shift.timefrom }}
         td {{ shift.timeto }}
         td.textright {{ shift.breakminutes }}
@@ -45,6 +45,7 @@ include ./standard-blocks.jade
   table.table.table-striped
     thead
       tr
+        th(ng-if='shiftTimesheet') Date
         th Pay Type
         th Unit
         th.textright Units
@@ -52,6 +53,7 @@ include ./standard-blocks.jade
         th.textright Total
     tbody
       tr(ng-repeat='rate in timesheetRates')
+        td(ng-if='shiftTimesheet') {{ rate.ShiftDate }}
         td {{ rate.BandDescription }}
         td {{ rate.UnitDescription }}
         td.textright {{ rate.Units | number:2 }}
@@ -59,7 +61,8 @@ include ./standard-blocks.jade
         td.textright {{ rate.Total | number:2 }}
     tfoot
       tr
-        th(colspan=4) Total
+        th(ng-if='shiftTimesheet', colspan=5) Total
+        th(ng-if='!shiftTimesheet', colspan=4) Total
         th.textright {{timesheetRatesTotal | number:2}}
         
   +FormError

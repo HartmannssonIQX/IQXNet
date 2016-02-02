@@ -6,14 +6,14 @@ include ./standard-blocks.jade
       tr
         th Number
         th(ng-if="userClass()!='CANDIDATE'") Temp
-        th(ng-if="userClass()!='CLIENT'") Client
+        th Client
         th Position
         th End Date
     tbody
       tr.drillable(ng-repeat='timesheet in theRecords', ng-click='expandTimesheet(timesheet.temptimesheetid)')
         td {{ timesheet.serialnumber }}
         td(ng-if="userClass()!='CANDIDATE'") {{ timesheet.tempname }}
-        td(ng-if="userClass()!='CLIENT'") {{ timesheet.companyname }}
+        td {{ timesheet.companyname }}{{ timesheet.companyaddress?',':'' }} {{ timesheet.companyaddress }}
         td {{ timesheet.position }}
         td {{ timesheet.weekenddate | date:'dd/MM/yyyy' }}
 

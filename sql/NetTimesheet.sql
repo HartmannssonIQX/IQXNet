@@ -1,5 +1,5 @@
 create PROCEDURE pears."NetTimesheet"(in pWebUserID char(20),in pTempTimesheetID char(20))
-result(temptimesheetid char(20),serialnumber char(20),timesheettype char(1),tempname char(60),position char(60),companyname char(60),weekenddate date,completedby char(50),completedat datetime)
+result(temptimesheetid char(20),serialnumber char(20),timesheettype char(1),tempname char(60),position char(60),companyname char(60),weekenddate date,completedby char(50),completedat datetime, companyaddress char(250), payrollnumber char(20))
 // IQXWeb
 begin
   select t.temptimesheetid,t.serialnumber,
@@ -14,7 +14,7 @@ begin
     vacancy.position,company.name as companyname,weekmonthenddate(t.period,t.periodlength) as weekenddate,
     (select first i.name from tempprovtimesheethistory as h join iqxnetuser as i on h.externaluserid = i.iqxnetuserid
       where h.temptimesheetid = t.temptimesheetid and h.newstatus = 100) as completedby,
-    t.whenentered as completedat
+    t.whenentered as completedat, GetCompanyAddressOnLine(company.companyid) as companyaddress, person.payrollnumber
     from temptimesheet as t key join placement key join vacancy key join employment key join company
     ,temptimesheet as t key join tempdesk
     ,temptimesheet as t key join person

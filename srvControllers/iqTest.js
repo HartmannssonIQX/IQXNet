@@ -24,7 +24,7 @@ function omniTranslate(x,tp) {
 
 iqTest.exec=function(sService,sUser,xData,sMode) {
   xData=xData || {}
-  var opts={parse:false}
+  var opts={parse:false, json:false, rejectUnauthorized:false}
   if (sUser) {
     opts.username=sUser
     opts.password=testPassword

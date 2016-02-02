@@ -61,7 +61,9 @@ apiTools.extractQueryString = function (sURL) {
   
 apiTools.buildOptions = function (hdrs,qry) {
   var auth,contentType,charset
-  if (hdrs['x-auth']) {
+  if (hdrs.iqxauth) {
+    auth=hdrs.iqxauth
+  } else if (hdrs['x-auth']) {
     try {
       auth=jwt.decode(hdrs['x-auth'],config.secret)
       }
@@ -97,6 +99,7 @@ apiTools.buildOptions = function (hdrs,qry) {
     if (!contentType || contentType=='application/json') {contentType='application/x-www-form-urlencoded'}
     opts.headers={'Content-Type': contentType + '; ' + charset}  // NB note the case of Content-Type - content-type breaks Needle charset transmission
     }
+  opts.rejectUnauthorized = false  // Otherwise it fails if IQXHub has a self-signed certificate which is perfectly adequate for encrypting node<->hub traffic
   return opts
   }
   

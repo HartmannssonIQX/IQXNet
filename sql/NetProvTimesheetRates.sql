@@ -1,5 +1,5 @@
 create procedure pears.NetProvTimesheetRates(in pWebUserID char(20),in pTempProvTimesheetID char(20))
-result(TempProvTimesheetLineID char(20),IsExpenses smallint,BandDescription char(50),UnitDescription char(100),Units decimal(12,2),Rate decimal(12,2),Total decimal(12,2),CanEditUnits smallint,CanEdit smallint,Rate2 decimal(12,2),Total2 decimal(12,2))
+result(TempProvTimesheetLineID char(20),IsExpenses smallint,BandDescription char(50),UnitDescription char(100),Units decimal(12,2),Rate decimal(12,2),Total decimal(12,2),CanEditUnits smallint,CanEdit smallint,Rate2 decimal(12,2),Total2 decimal(12,2), ShiftDate date)
 // IQXWeb
 begin
   declare userclass char(20);
@@ -12,7 +12,7 @@ begin
       endif),nullif(tempprovtimesheetline.unitscharged,0.0) as units,nullif(tempprovtimesheetline.chargerate,0.0) as rate,isnull(units*rate,0.0) as total,
       (if units is null or isnull(tempprovtimesheetline.description,'') = 'Units Edited' or NetVacancyHasRateScript(t.tempjobtypeid,t.vacancyid) = 0 then 1 else 0
       endif) as CanEditUnits,(if IsExpenses = 1 or CanEditUnits = 1 then 1 else 0
-      endif) as CanEdit,null,null
+      endif) as CanEdit,null,null,date(tempprovtimesheetline.ShiftTime)
       from tempprovtimesheetline key join(temppayband,tempprovtimesheet as t)
       where tempprovtimesheetline.tempprovtimesheetid = pTempProvTimesheetID order by
       tempprovtimesheetline.linenumber asc
@@ -25,7 +25,7 @@ begin
         endif),nullif(tempprovtimesheetline.unitspaid,0.0) as units,nullif(tempprovtimesheetline.payrate,0.0) as rate,isnull(units*rate,0.0) as total,
         (if units is null or isnull(tempprovtimesheetline.description,'') = 'Units Edited' or NetVacancyHasRateScript(t.tempjobtypeid,t.vacancyid) = 0 then 1 else 0
         endif) as CanEditUnits,(if IsExpenses = 1 or CanEditUnits = 1 then 1 else 0
-        endif) as CanEdit,nullif(tempprovtimesheetline.chargerate,0.0) as rate2,isnull(units*rate2,0.0) as total2
+        endif) as CanEdit,nullif(tempprovtimesheetline.chargerate,0.0) as rate2,isnull(units*rate2,0.0) as total2,date(tempprovtimesheetline.ShiftTime)
         from tempprovtimesheetline key join(temppayband,tempprovtimesheet as t)
         where tempprovtimesheetline.tempprovtimesheetid = pTempProvTimesheetID order by
         tempprovtimesheetline.linenumber asc
@@ -37,7 +37,7 @@ begin
         endif),nullif(tempprovtimesheetline.unitspaid,0.0) as units,nullif(tempprovtimesheetline.payrate,0.0) as rate,isnull(units*rate,0.0) as total,
         (if units is null or isnull(tempprovtimesheetline.description,'') = 'Units Edited' or NetVacancyHasRateScript(t.tempjobtypeid,t.vacancyid) = 0 then 1 else 0
         endif) as CanEditUnits,(if IsExpenses = 1 or CanEditUnits = 1 then 1 else 0
-        endif) as CanEdit,null,null
+        endif) as CanEdit,null,null,date(tempprovtimesheetline.ShiftTime)
         from tempprovtimesheetline key join(temppayband,tempprovtimesheet as t)
         where tempprovtimesheetline.tempprovtimesheetid = pTempProvTimesheetID order by
         tempprovtimesheetline.linenumber asc
