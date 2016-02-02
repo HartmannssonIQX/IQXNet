@@ -17,6 +17,7 @@ angular.module('app').config(function($routeProvider) {
   .when('/test',{controller:'TestCtrl',templateUrl:'/views/test.html'})
   .when('/webReference',{controller:'webReferenceCtrl',templateUrl:'/views/webReference.html'})
   .when('/serverstats',{controller:'ServerStatsCtrl',templateUrl:'/views/serverStats.html'})
+  .when('/help',{controller:'HelpCtrl',templateUrl:'/views/help.html'})
   })
   .run( function($rootScope, $location, ApplicationSvc) {
     // Register listener to watch route changes

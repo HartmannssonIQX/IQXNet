@@ -97,6 +97,7 @@ apiTools.buildOptions = function (hdrs,qry) {
     if (!contentType || contentType=='application/json') {contentType='application/x-www-form-urlencoded'}
     opts.headers={'Content-Type': contentType + '; ' + charset}  // NB note the case of Content-Type - content-type breaks Needle charset transmission
     }
+  opts.rejectUnauthorized = false
   return opts
   }
   
