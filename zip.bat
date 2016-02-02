@@ -1,3 +1,4 @@
+set PATH=%PATH%;C:\Program Files\7-Zip\
 del IQXWeb.zip
 7z a IQXWeb.zip server.js install.bat iqxWeb.bat package.json serviceInstall.js config_sample.js readme.txt
 7z a IQXWeb.zip views
