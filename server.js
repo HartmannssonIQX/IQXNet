@@ -1,37 +1,18 @@
 var express    = require('express')
 var bodyParser = require('body-parser')
-var logger     = require('morgan')
 var https = require('https')
 var http = require('http')
 var fs = require('fs')
 var config=require('./config')
 var app = express()
-var FileStreamRotator = require('file-stream-rotator')
-var moment = require('moment')
+var logger = require('./srvControllers/logger')
 
 //Set up the routing middleware:
 app.use(bodyParser.json())  // Parse JSON request body into req.body
 
 app.use(require('./srvControllers/auth'))  // Decode the x-auth header. This is required here so as to display the username in the log
 
-var logFormat=':method :url | :req[iqxauthuser] | :status | :response-time ms | :res[content-length] bytes'
-if (config.logToFile) {
-  var logDir=__dirname+'/logs'
-  try {
-    fs.mkdirSync(logDir)
-  } catch(err) {}
-  logger.token('time', function(){ return moment().format('HH:mm:ss') })
-  logFormat=':time '+logFormat
-  var dailyLogStream = FileStreamRotator.getStream({
-    filename: logDir + '/%DATE%.log',
-    frequency: 'daily',
-    verbose: false,
-    date_format: 'YYYY-MM-DD'
-    })
-  app.use(logger(logFormat,{stream: dailyLogStream}))
-} else {  // Just show on console
-  app.use(logger(logFormat))
-}
+logger(app)  // Set up request logging - either console (default) or daily file in logs directory
 
 // Route the requests to the controllers:
 app.use(require('./srvControllers'))
