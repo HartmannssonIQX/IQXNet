@@ -1,140 +1,105 @@
 <Job title="Export Vacancies to Web" dateformat="ddd dd/mm/yyyy" autoclose="Yes">
-	<Library>
-	
-		<MakeFormField fieldtype="" caption="" name="" multiple="multiple or blank" class="e.g. required" sql="select value,description">
-			<WriteXMLTag tag="SearchField" _fieldtype="{fieldtype}" _caption="{caption}" _name="{name}" _multiple="{multiple}" _class="{class}">
-				<If x1="{sql}" x2="" trim="YES" comparison="!=">
-					<SQLQuery>
-						<SQLSelect>{sql}</SQLSelect>
-						<ForEachRow>
-							<WriteXMLTag nocrlf="YES" tag="option" _value="{value}"><Write xmlsafe="YES">{description}</Write></WriteXMLTag>
-						</ForEachRow>
-					</SQLQuery>
-				</If>
-			</WriteXMLTag>
-		</MakeFormField>
-		
-		<MakeCaption fieldname="" caption="">
-			<WriteXMLTag nocrlf="YES" tag="Caption" _fieldname="{fieldname}"><Write xmlsafe="YES">{caption}</Write></WriteXMLTag>
-		</MakeCaption>
-		<MakeCaptionJSON fieldname="" caption="">
-			<WriteJSONField nocrlf="YES" tag="Caption" _fieldname="{fieldname}"><Write xmlsafe="YES">{caption}</Write></WriteJSONField>
-		</MakeCaptionJSON>
-		<MakeField fieldname="" inRow="1 if should appear in the table row" inExpansion="1 if should appear in the expanded details">
-			<WriteXMLTag nocrlf="YES" tag="{fieldname}" _tbl="{inRow}" _exp="{inExpansion}"><WriteField cdata="YES">{fieldname}</WriteField></WriteXMLTag>
-		</MakeField>
-	</Library>
-	<IfFileExists filename="{jobdir}vacancyuploader.xml">
-  		<SetVariable name="doUpload" value="1"/>
-  		<SetVariable name="exportfolder" value="{tempdir}"/>
-	</IfFileExists>
-	<Else>
-  		<SetVariable name="doUpload" value="0"/>
-  		<SetVariable name="exportfolder" sql="select first websitefolder from IQXNetEmailDetails"/>
-	</Else>
-	
-	
-  	<ExportFile directory="{exportfolder}" filename="WebVacancies.json">
-    	<WriteLn text="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>"/>
-	
-    	<WriteXMLTag tag="JobSearch">
-		
-      		<WriteXMLTag tag="SearchForm">
-      			<Call fieldtype="select" caption="Job Type" name="xpath_tempperm" multiple="" class="required" sql="select 'T' as value,'Temp' as description union select 'P','Perm'">MakeFormField</Call>
-      			<Call fieldtype="select" caption="Department" name="xpath_departmentid" multiple="" class="required" sql="select departmentid as value,name as description from department where searchable=1 and publishtoweb=1 order by sortorder">MakeFormField</Call>
-				<SQLQuery>
-					<SQLSelect>select tagid,taglocation,description,tagtype from tag where taglocation like 'V%' and publiconweb=1 and tagtype in ('M','L') order by sortorder</SQLSelect>
-					<ForEachRow>
-						<If x1="{tagtype}" x2="L" ignorecase="YES">
-							<SetVariable name="isMultiple" value="multiple" />
-							<SetVariable name="squareBrackets" value="[]" />
-							<SetVariable name="xValue" value="tagchoiceid" />
-						</If>
-						<Else>
-							<SetVariable name="isMultiple" value="" />
-							<SetVariable name="squareBrackets" value="" />
-							<SetVariable name="xValue" value="(if tagchoiceid='_' then '$NONE$' else tagchoiceid endif)" />
-						</Else>
-       					<Call fieldtype="select" caption="{description}" name="xpath_Q_{taglocation}_{tagid}{squareBrackets}" multiple="{isMultiple}" class="" sql="select {xValue} as value, description from tagchoice where charindex('%',tagchoiceid)=0 and tagid=:tagid and taglocation=:taglocation and subchoice=0 and isnull(donotpublishtoweb,0)=0 order by sortorder">MakeFormField</Call>
-					</ForEachRow>
-				</SQLQuery>
-			</WriteXMLTag>
-			
-		</WriteXMLTag>
-		<Writeln></Writeln>
+  <Library>
 
-		
-<WriteJSONObject nocrlf ="yes">	
-	<WriteJSONRow name="JobSearch">
-		<WriteJSONRow name="SearchForm">
-			<WriteJSONRow name="SearchField" output="Array">
-				<WriteJSONField name="@fieldtype" value="{}"></WriteJSONField>
-				<WriteJSONField name="@caption" value="{}"></WriteJSONField>
-				<WriteJSONField name="@name" value="{}"></WriteJSONField>
-				<WriteJSONField name="@multiple" value="{}"></WriteJSONField>
-				<WriteJSONField name="@class" value="{}"></WriteJSONField>
-				<WriteJSONRow name="option" output="Array">
-					<WriteJSONField name="@value" value="{}"></WriteJSONField>
-					<WriteJSONField name="#text" value="{}"></WriteJSONField>					
-				</WriteJSONRow>
-			</WriteJSONRow>
-		</WriteJSONRow>		
-		
-		<WriteJSONRow name="Captions" output="Array">
-		<!-- simplified  - confirm preferred format -->
-			<WriteJSONField name="@ourref" value="Reference"></WriteJSONField>
-			<WriteJSONField name="@position" value="Position"></WriteJSONField>
-			<WriteJSONField name="@jobtype" value="Job Type"></WriteJSONField>
-			<WriteJSONField name="@department" value="Department"></WriteJSONField>
-			<WriteJSONField name="@branch" value="Branch"></WriteJSONField>
-			<WriteJSONField name="@startdate" value="Start Date"></WriteJSONField>
-			
-		<Writeln></Writeln>
-		<Writeln></Writeln>
-			<SQLQuery>
-				<SQLSelect>select tagid,taglocation,description from tag where taglocation like 'V%' /*and publiconweb=1*/ order by sortorder</SQLSelect>
-				<ForEachRow>
-					<Call fieldname="VQ_{taglocation}_{tagid}" caption="{description}">MakeCaptionJSON</Call>
-					<SetVariable name="VQ_FieldList" value="{VQ_FieldList},getquestanswer('{taglocation}','{tagid}',vacancy.vacancyid) as VQ_{taglocation}_{tagid}" />
-				</ForEachRow>
-			</SQLQuery>
-		</WriteJSONRow>
-	
-		<WriteJSONRow name="Jobs" output="Array">
-			<SQLQuery>
-				<SQLSelect><![CDATA[select 
-						Vacancy.VacancyID, 
-						(if isnull(Vacancy.Temp,0)=1 then 'T' else 'P' endif) as tempperm,
-						(if isnull(Vacancy.Temp,0)=1 then 'Temp' else 'Perm' endif) as jobtype,
-						vacancy.departmentid,department.name as department,
-						vacancy.position,vacancy.startdate,vacancy.refcode as ourref,vacancy.othernotes as description,
-						agencydetails.name as branch,staff.name as contactname,staff.email as contactemail{VQ_FieldList},vacancy.vacancyid as JobId
-					from vacancy key join staff key join agencydetails,vacancy key join department
-					where vacancy.status='C' and trim(isnull(vacancy.position,'')) != '' and trim(isnull(contactemail,'')) != '' /*and trim(isnull(ourref,'')) != ''*/
-						and vacancy.startdate is not null and department.searchable=1 and department.publishtoweb=1
-					order by ourref ]]>
-				</SQLSelect>
-				<ForEachRow>
-					<WriteJSONField name="@id" value="{vacancyid}"></WriteJSONField>
-					<WriteJSONRow name="ourref">
-					 <!-- missing inRow="1" inExpansion="1"   - confirm preferred format -->
-						<WriteJSONField name="tbl" value="{}"></WriteJSONField>
-						<WriteJSONField name="exp" value="{}"></WriteJSONField>
-						<WriteJSONField name="#text" value="{}"></WriteJSONField>
-					</WriteJSONRow>
-				</ForEachRow>
-			</SQLQuery>
-		</WriteJSONRow>
-	</WriteJSONRow><Writeln></Writeln>
+    <MakeFormField fieldtype="" caption="" name="" multiple="multiple or blank" class="e.g. required" sql="select value,description">
+        <If x1="{sql}" x2="" trim="YES" comparison="!=">
+          <WriteJSONObject>
+            <WriteJSONField name="fieldType" value="{fieldtype}"></WriteJSONField>
+            <WriteJSONField name="caption" value="{caption}"></WriteJSONField>
+            <WriteJSONField name="name" value="{name}"></WriteJSONField>
+            <WriteJSONField name="multiple" value="{multiple}"></WriteJSONField>
+            <WriteJSONField name="class" value="{class}"></WriteJSONField>
+            <WriteJSONArray name="options">
+              <SQLQuery>
+                <SQLSelect>{sql}</SQLSelect>
+                <ForEachRow>
+                  <WriteJSONRow/>
+                </ForEachRow>
+              </SQLQuery>
+            </WriteJSONArray>
+            
+          </WriteJSONObject>
+        </If>
+    </MakeFormField>
+    
+  </Library>
+  
+  <IfFileExists filename="{jobdir}vacancyuploader.json">
+      <SetVariable name="doUpload" value="1"/>
+      <SetVariable name="exportfolder" value="{tempdir}"/>
+  </IfFileExists>
+  <Else>
+      <SetVariable name="doUpload" value="0"/>
+      <SetVariable name="exportfolder" sql="select first websitefolder from IQXNetEmailDetails"/>
+  </Else>
+    
+    <ExportFile directory="{exportfolder}" filename="WebVacancies.json">
+  
+    
+<WriteJSONObject> 
+  <WriteJSONArray name="searchFields" >
+      <SQLQuery>
+            <Call fieldtype="select" caption="Job Type" name="xpath_tempperm" multiple="" class="required" sql="select 'T' as value,'Temp' as description union select 'P','Perm'">MakeFormField</Call>
+            <Call fieldtype="select" caption="Department" name="xpath_departmentid" multiple="" class="required" sql="select departmentid as value,name as description from department where searchable=1 and publishtoweb=1 order by sortorder">MakeFormField</Call>
+        <SQLSelect>select tagid,taglocation,description,tagtype from tag where taglocation like 'V%' and publiconweb=1 and tagtype in ('M','L') and description != 'Vision Type' order by sortorder</SQLSelect>
+        <ForEachRow>
+          <If x1="{tagtype}" x2="L" ignorecase="YES">
+            <SetVariable name="isMultiple" value="multiple" />
+            <SetVariable name="squareBrackets" value="[]" />
+            <SetVariable name="xValue" value="tagchoiceid" />
+          </If>
+          <Else>
+            <SetVariable name="isMultiple" value="" />
+            <SetVariable name="squareBrackets" value="" />
+            <SetVariable name="xValue" value="(if tagchoiceid='_' then '$NONE$' else tagchoiceid endif)" />
+          </Else>
+            <Call fieldtype="select" caption="{description}" name="xpath_Q_{taglocation}_{tagid}{squareBrackets}" multiple="{isMultiple}" class="" sql="select {xValue} as value, description from tagchoice where charindex('%',tagchoiceid)=0 and tagid='{tagid}' and taglocation='{taglocation}' and subchoice=0 and isnull(donotpublishtoweb,0)=0 order by sortorder">MakeFormField</Call>
+        </ForEachRow>
+      </SQLQuery>
+  </WriteJSONArray>
+  
+  <Writeln></Writeln>
+  
+  <WriteJSONArray name="jobs" >
+    <SQLQuery>
+      <SQLSelect><![CDATA[select 
+          Vacancy.vacancyID V_vacancyID, 
+          (if isnull(Vacancy.Temp,0)=1 then 'T' else 'P' endif) as V_TempPerm,
+          (if isnull(Vacancy.Temp,0)=1 then 'Temp' else 'Perm' endif) as T_jobType,
+          vacancy.departmentID as V_departmentid, department.name as T_department,
+          vacancy.position as T_position, vacancy.startDate as T_startDate, vacancy.refcode as X_ourRef, vacancy.othernotes as X_description,
+          agencydetails.name as T_branch, staff.name as X_contactName, staff.email as X_contactEmail{VQ_FieldList}
+        from vacancy key join staff key join agencydetails,vacancy key join department
+        where vacancy.status='C' and trim(isnull(vacancy.position,'')) != '' and trim(isnull(X_contactemail,'')) != '' 
+          and vacancy.startdate is not null and department.searchable=1 and department.publishtoweb=1
+        order by X_ourref ]]>
+      </SQLSelect>
+      <ForEachRow>
+        <WriteJSONRow>
+
+          <SQLQuery name="vactagval">
+            <SQLSelect>select tag.taglocation + '_' + tag.tagid as val, tagvalue.tagchoiceid from tagvalue key join tag where tag.taglocation like 'V%' and tagvalue.id=:V_vacancyID and tag.publiconweb=1 and tag.tagtype in ('M','L')</SQLSelect>
+            <WriteJSONArray name="questions">
+              <ForEachRow>
+                <WriteJSONObject>
+                  <WriteJSONField name="tagid" value="{val}"></WriteJSONField> 
+                  <WriteJSONField name="value" value="{tagchoiceid}"></WriteJSONField> 
+                </WriteJSONObject>
+              </ForEachRow>
+            </WriteJSONArray>
+          </SQLQuery>
+        </WriteJSONRow>
+      </ForEachRow>
+    </SQLQuery>
+  </WriteJSONArray>
 </WriteJSONObject>
 
 
-<Writeln></Writeln><Writeln></Writeln><Writeln></Writeln>	
 
-	</ExportFile>
-	<If x1="{doUpload}" x2="1">
-		<RunJob job="{jobdir}vacancyuploader.xml">
-			<Writeln>{exportfolder}WebVacancies.json</Writeln>
-		</RunJob>
-	</If>
+  </ExportFile>
+  <If x1="{doUpload}" x2="1">
+    <RunJob job="{jobdir}vacancyuploader.xml">
+      <Writeln>{exportfolder}WebVacancies.json</Writeln>
+    </RunJob>
+  </If>
 </Job>
