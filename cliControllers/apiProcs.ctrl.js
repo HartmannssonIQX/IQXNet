@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('APIprocsCtrl', function ($scope, FormSvc, ApiSvc, ApplicationSvc, $q, $timeout) {
+.controller('APIprocsCtrl', function ($scope, FormSvc, ApiSvc, ApplicationSvc, $q, $timeout, $location) {
   FormSvc.setOptions($scope)
   
   $scope.pOwner='pears'
@@ -115,6 +115,10 @@ angular.module('app')
     .finally(function(){
       $scope.makeJobLabel=''
       })
+    }
+    
+  $scope.help=function() {
+    $location.url('/help')
     }
   
 })

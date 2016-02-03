@@ -22,8 +22,8 @@ begin
     "LIST"("parm_name" order by "parm_type" asc,"parm_id" asc) as "paramName",
     "LIST"("parm_type" order by "parm_type" asc,"parm_id" asc) as "paramIO",
     "LIST"("isnull"("default",'null') order by "parm_type" asc,"parm_id" asc) as "paramDefault",
-    "LIST"("isnull"("base_type_str",'null') order by "parm_type" asc,"parm_id" asc) as "paramType"
-    from "sys"."sysprocedure" as "pr" key join "SYS"."SYSPROCPARM" as "pa" --where pr.proc_name = o.proc_name
+    "LIST"("isnull"("domain_name",'null') order by "parm_type" asc,"parm_id" asc) as "paramType"
+    from "sys"."sysprocedure" as "pr" key join "SYS"."SYSPROCPARM" as "pa" key join "SYS"."SYSDOMAIN" --where pr.proc_name = o.proc_name
     where "proc_name" like 'net%'
     group by "proc_name"
     order by 1 asc
