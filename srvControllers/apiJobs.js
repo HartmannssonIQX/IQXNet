@@ -46,6 +46,7 @@ router.post('/searchJobs',function (req,res) {
   var awrRole = srch.xpath_Q_VED_AWR
   var subject = srch.xpath_Q_VED_SUB
   
+  var jobs=webVacancies.jobs
 
   if(jobType!=undefined)
     jobs=_.filter(jobs,function(job){
