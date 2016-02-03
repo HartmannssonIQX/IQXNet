@@ -1,4 +1,9 @@
 angular.module('app')
+
+.config(function(calendarConfig) {
+  calendarConfig.displayEventEndTimes = true
+  })
+
 .controller('CandDiaryCtrl', function ($scope, FormSvc) {
     FormSvc.setOptions($scope,{
       fetchAPI:'callresult/netcandidatediary',
@@ -16,13 +21,16 @@ angular.module('app')
     return 'inverse'
     }
     
+    
   $scope.eventClicked=function(evt) {alert('clicked')}
   $scope.eventEdited=function(evt) {alert('edit')}
   $scope.eventDeleted=function(evt) {alert('delete')}
     
   $scope.events=[]
-  $scope.calendarView='month'
-  $scope.calendarDay=new Date() // today
+  $scope.cellIsOpen=true
+  $scope.calendarDate=new Date() // today
+  $scope.calendarView='month' 
+
    
   $scope.fetch()
   .then(function() {
@@ -30,5 +38,6 @@ angular.module('app')
     angular.forEach($scope.theRecords,function(row) {
       $scope.events.push({title:row.DiaryClass,type:extractType(row.DiaryClass),startsAt:extractDateTime(row.DateFrom,row.TimeFrom || '00:00'),endsAt:extractDateTime(row.DateTo,row.TimeTo || '23:59')})
       })
-    }) 
+    })
+    
 })

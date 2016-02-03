@@ -2,13 +2,12 @@
 
 
   h2.text-center {{ calendarTitle }}
-
   .row
     .col-md-6.text-center
       .btn-group
-        button.btn.btn-primary(mwl-date-modifier, date="calendarDay", decrement="calendarView") Previous
-        button.btn.btn-default(mwl-date-modifier, date="calendarDay", set-to-today) Today
-        button.btn.btn-primary(mwl-date-modifier, date="calendarDay", increment="calendarView") Next
+        button.btn.btn-primary(mwl-date-modifier, date="calendarDate", decrement="calendarView") Previous
+        button.btn.btn-default(mwl-date-modifier, date="calendarDate", set-to-today) Today
+        button.btn.btn-primary(mwl-date-modifier, date="calendarDate", increment="calendarView") Next
     br.visible-xs.visible-sm
     .col-md-6.text-center
       .btn-group
@@ -22,10 +21,11 @@
   mwl-calendar(events="events",
     view="calendarView",
     view-title="calendarTitle",
-    current-day="calendarDay",
+    view-date="calendarDate",
     on-event-click="eventClicked(calendarEvent)",
     edit-event-html!="'<i class=\\'glyphicon glyphicon-pencil\\'></i>'",
     delete-event-html!="'<i class=\\'glyphicon glyphicon-remove\\'></i>'",
     on-edit-event-click="eventEdited(calendarEvent)",
     on-delete-event-click="eventDeleted(calendarEvent)",
-    auto-open="false")
+    cell-is-open="cellIsOpen"
+    )
