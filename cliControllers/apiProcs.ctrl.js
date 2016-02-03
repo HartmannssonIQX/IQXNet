@@ -1,7 +1,7 @@
 angular.module('app')
 .controller('APIprocsCtrl', function ($scope, FormSvc, ApiSvc, ApplicationSvc, $q, $timeout, $location) {
   FormSvc.setOptions($scope)
-  
+  $scope.reset()  // If not doing an initial form fetch then reset will setEditing(false) etc etc
   $scope.pOwner='pears'
   $scope.pRoot='Net'
   $scope.showDiffsOnly=false
