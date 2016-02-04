@@ -3,14 +3,15 @@ var _ = require('lodash')
 var config=require('../config')
 var apiTools=require('./apiTools')
 var fs = require('fs')
+var path = require('path')
 var chokidar = require('chokidar')
 
 // The API for job searching
 
 var webVacancies = {}
 var webVacanciesValid = false
-var WebVacanciesFile = './data/WebVacancies.json'
-
+//var WebVacanciesFile = './data/WebVacancies.json'
+var WebVacanciesFile = path.join(__dirname, '../data/WebVacancies.json')
 function loadWebVacancies() {
   console.log('Updating web vacancies from ' + WebVacanciesFile)
   fs.readFile(WebVacanciesFile, function (err, data) {
