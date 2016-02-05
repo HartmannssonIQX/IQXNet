@@ -26,7 +26,7 @@ angular.module('app')
     // if (!$scope.theForm.$valid || !$scope.saveAndSubmit == false) {return}
       $scope.postCompletedForm=$scope.saveAndSubmit
       $scope.theRecord.Completed=$scope.saveAndSubmit ? 1 : 0;
-      return FormSvc.update($scope,$scope.saveAndSubmit)  // Do not do the fetch if submitted
+      return FormSvc.update($scope,$scope.saveAndSubmit,$scope.saveAndSubmit)  // Do not do the fetch if submitted
       .then(function() {
         $scope.showForm=!$scope.saveAndSubmit
         $scope.isCompleted=$scope.saveAndSubmit

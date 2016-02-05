@@ -65,6 +65,12 @@ angular.module('app')
       return $timeout(function() {}, 2000)  // Display the Upload complete message for 2 seconds before refreshing and cleaning up
       }, null, $scope.showUploadProgress) // 3rd arg is the progress callback
     .then(function() {
+      return $scope.exec('call/NetMessage',{ptype:'DOCUMENTUPLOAD',
+                                            ptitle:$scope.userName()+' '+$scope.theRecord.Description+' Uploaded',
+                                            pdescription:''
+                                            })
+      })
+    .then(function() {
       return $scope.fetch()  // Refresh the list
       })
     .then(function() {

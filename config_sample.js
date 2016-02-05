@@ -5,6 +5,7 @@ module.exports={
   publicSecurePort: 0,                   // The outward facing https web server port - 0 to disable
   // For secure comms you need key.pem and cert.pem with your security certificate in the server.js folder
   passwordToForceChange: 'password',     // If this password is used it will force an immediate change on login
+  logToFile: false,                      // Set to true to log requests to daily files in logs folder. Default is show on console
   clientParams:{
     browserTitle: 'IQX Web',                  // The browser caption bar
     headerName: 'IQX Web',                    // Appears on the page header if no logoFile

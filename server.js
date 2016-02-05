@@ -1,14 +1,20 @@
 var express    = require('express')
 var bodyParser = require('body-parser')
-var logger     = require('morgan')
 var https = require('https')
 var http = require('http')
 var fs = require('fs')
 var config=require('./config')
 var app = express()
+var logger = require('./srvControllers/logger')
 
-app.use(bodyParser.json())
-app.use(logger('dev'))
+//Set up the routing middleware:
+app.use(bodyParser.json())  // Parse JSON request body into req.body
+
+app.use(require('./srvControllers/auth'))  // Decode the x-auth header. This is required here so as to display the username in the log
+
+logger(app)  // Set up request logging - either console (default) or daily file in logs directory
+
+// Route the requests to the controllers:
 app.use(require('./srvControllers'))
 
 var port=process.env.PORT || config.publicPort   // A separate server instance for automated testing can be ensured by setting env.PORT in the test harness

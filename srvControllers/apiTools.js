@@ -61,7 +61,9 @@ apiTools.extractQueryString = function (sURL) {
   
 apiTools.buildOptions = function (hdrs,qry) {
   var auth,contentType,charset
-  if (hdrs['x-auth']) {
+  if (hdrs.iqxauth) {
+    auth=hdrs.iqxauth
+  } else if (hdrs['x-auth']) {
     try {
       auth=jwt.decode(hdrs['x-auth'],config.secret)
       }
