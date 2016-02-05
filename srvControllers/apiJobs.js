@@ -27,7 +27,7 @@ function loadWebVacancies() {
 	
 }
 
-chokidar.watch(WebVacanciesFile, {awaitWriteFinish:true}).on('change', function(event, path) {
+chokidar.watch(WebVacanciesFile, {awaitWriteFinish:{stabilityThreshold:5000,pollInterval:1000}}).on('change', function(event, path) {
   loadWebVacancies()
   })
 
