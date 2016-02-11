@@ -10,73 +10,28 @@ h2.textcentre Job Search
   table.table.table-striped(ng-show='showResults')
     thead
       tr
-        th Job type
-        th Department
-        th Position
-        th Start date
-        th Branch
+        th(ng-repeat="field in theResults[0] | filter:{type:'T'}") {{field.caption}}
     tbody
       tr.drillable(ng-repeat-start='job in theResults', ng-click='job.expanded = !job.expanded', ng-show='!job.expanded')
-        td {{ job.T_jobType }}
-        td {{ job.T_department }}
-        td {{ job.T_position }}
-        td {{ job.T_startDate }}
-        td {{ job.T_branch }}
-      tr(ng-repeat-end, ng-if='job.expanded', ng-click='job.expanded = !job.expanded', ng-show='job.expanded')
-        td(colspan=5 align=center)
+        td(ng-repeat="field in job | filter:{type:'T'}") {{ field.value }}
+      tr(ng-repeat-end, ng-if='job.expanded', ng-show='job.expanded')
+        td(colspan=5 align='center')
           table(style="width:50%;margin: 0 auto;").table.table-striped 
-            thead
-              td
-                p Position
-                p Branch
-                p Start date
-                p Job type
-                p Department
-                p Description
-                p Contact name
-                p Contact email
-                p AWR role
-                p Subject(s)
-                p Vision type
-                p RefNo
-              td
-                p {{ job.T_position }}
-                p {{ job.T_branch }}
-                p {{ job.T_startDate }}
-                p {{ job.T_jobType }}
-                p {{ job.T_department }}
-                p {{ job.X_description }}
-                p {{ job.X_contactName }}
-                p {{ job.X_contactEmail }}
-                p {{ job.X_VED_AWR }}
-                p {{ job.X_VED_SUB }}
-                p {{ job.X_V_TYP }}
-                p {{ job.X_ourRef }}
-      tr(ng-repeat-end, ng-if='job.expanded', ng-click='job.expanded = !job.expanded')
-        td(colspan=5)
-          table.table.table-striped
-            thead
-              tr
-                th RefNo
-                th Description
-                th Contact name
-                th Contact email
-                th AWR role
-                th Subject(s)
-                th Vision type
             tbody
-              tr(ng-repeat-end, ng-click='job.expanded = !job.expanded')
-                td {{ job.X_ourRef }}
-                td {{ job.X_description }}
-                td {{ job.X_contactName }}
-                td {{ job.X_contactEmail }}
-                td {{ job.X_VED_AWR }}
-                td {{ job.X_VED_SUB }}
-                td {{ job.X_V_TYP }}
-              tr(ng-repeat='q in job.questions')
-                td {{ q.tagid }}
-                td {{ q.value }}
-                td(colspan=5)
+              td 
+                p(ng-repeat="field in job") {{field.caption}}
+              td
+                p(ng-repeat="field in job") {{field.value}}
+            tfoot
+              tr
+                td(colspan=2 align='right') 
+                  button.btn.btn-sm.btn-primary(ng-click='applyRole(job)') Apply&nbsp;
+                    span.glyphicon.glyphicon-thumbs-up
+                  button.btn.btn-sm.btn-primary(ng-click='emailRole(job)') Email&nbsp;
+                    span.glyphicon.glyphicon-envelope
+                  button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') Hide Details&nbsp;
+                    span.glyphicon.glyphicon-menu-up
+
     tfoot
       tr
         th(colspan=4) Total
