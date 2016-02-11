@@ -14,19 +14,18 @@ angular.module('app')
       theResults:{},
       numberOfResults:0      // why is showResults undefined even though it is set to 0?
       })
-        
-    $scope.applyRole=function(job) {
-      var ref = job[4].value
-      console.log(ref)
-/*      sh.formError=''
-      $scope.state.editing=true
-      $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits
-      sh.editing=true*/
-    }
-    $scope.emailRole=function(job) {
-      var ref = job[4].value
-    }
-
+     
+-    $scope.applyRole=function(job) {		
+-      var ref = job[4].value		
+-      console.log(ref)		
+-/*      sh.formError=''		
+-      $scope.state.editing=true		
+-      $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits		
+-      sh.editing=true*/		
+-    }		
+-    $scope.emailRole=function(job) {		
+-      var ref = job[4].value		
+-    }
     $scope.saveButtonCaption='Search'
     
     $scope.update=function() {
