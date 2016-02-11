@@ -7,14 +7,21 @@ angular.module('app')
       multiRow:true,
       notLoggedIn:true, // New candidate so obviously not yet logged in
       autoEdit:true, // Switch form straight to edit mode
-      doNotPreventNav:true // Stop edit mode from blocking switch to other views
+      doNotPreventNav:true, // Stop edit mode from blocking switch to other views
       saveCleanFields:true, // All fields sent, whether or not dirty
       savePrefix:'p',
       showResults:false,
       theResults:{},
       numberOfResults:0      // why is showResults undefined even though it is set to 0?
       })
-     
+        
+    $scope.applyRole=function(job) {
+      var ref = job[4].value
+      console.log(ref)
+    }
+    $scope.emailRole=function(job) {
+      var ref = job[4].value
+    }
 
     $scope.saveButtonCaption='Search'
     

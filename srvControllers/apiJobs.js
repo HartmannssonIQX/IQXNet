@@ -39,59 +39,34 @@ router.get('/searchFields',function (req,res,next) {   //what is next there for?
 })
 
 router.post('/searchJobs',function (req,res) {
-  var srch = req.body
-  var jobType = srch.xpath_tempperm
-  var department = srch.xpath_departmentid
-  var visionType = srch.xpath_Q_V_TYP
-  var awrRole = srch.xpath_Q_VED_AWR
-  var subject = srch.xpath_Q_VED_SUB
+   
+  var srchJobs=_.filter(webVacancies.jobs,function(job) {
+    return _.every(req.body,function (xValue,xKey) {
+      if (!xKey.match(/^Q/)) {
+        return (job[xKey]==xValue)
+      } else {
+        return _.find(job.questions,{tagid:xKey.substring(2),value:xValue})
+      }
+      })
+    })
+  var resJobs=[]
+  _.forEach(srchJobs,function(job){
+    var resJob=[]
+    _.forEach(job,function(val,key){
+      if (key.match(/^[TX]/)) {
+        resJob.push({caption:key.substring(2).replace('_', ' '),
+                     value:val,
+                     type:key.substring(0,1)})
+      }
+      })
+    resJobs.push(resJob)
+    })
+	res.send(apiTools.IQXSuccess(resJobs))
   
-  var jobs=webVacancies.jobs
-
-  if(jobType!=undefined)
-    jobs=_.filter(jobs,function(job){
-      var r = job.TempPerm == jobType
-      var r = job.V_TempPerm == jobType
-      return r
-    })
-  if(visionType!=undefined)
-    jobs=_.filter(jobs,function(job){
-      var r = job.VQ_V_TYP == visionType
-      return r
-    })
-  if(department!=undefined)
-    jobs=_.filter(jobs,function(job){
-      var r = job.V_departmentid == department
-      return r
-    })
-  if(awrRole!=undefined)
-    jobs=_.filter(jobs,function(job){
-      if(job.questions.length>0){
-        var r = job.questions[0].value == awrRole
-        return r
-      }
-    })
-  if(subject!=undefined)
-    jobs=_.filter(jobs,function(job){
-      if(job.questions.length>0){
-        var r = job.questions[0].value == subject
-        return r
-      }
-    })
-    
-    
-    
-  //Hint: use a _.every inside your _.filter to iterate the req.body params
-    /*
-    _.forEach(jobs, function(value, key){
-      console.log(key)
-      console.log(value.vacancyID)
-    })
-    */
-    
-  console.log(jobs.length)
-	res.send(apiTools.IQXSuccess(jobs))
+//  console.log(srch)
 })
+
+
 loadWebVacancies()
 
 module.exports=router
