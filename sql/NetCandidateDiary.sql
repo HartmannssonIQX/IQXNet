@@ -10,7 +10,7 @@ begin
   select string('Shift_',s.tempshiftid) as DiaryID,
     (case s.state when 'H' then 'Holiday' when 'U' then 'Unavailable' when 'A' then 'Available' when 'C' then 'Cancelled'
     else 'Working'
-    end) as DiaryClass,(case s.state when 'H' then 'deleteable_shift' when 'U' then 'deleteable_shift' when 'A' then 'deleteable_shift' when 'P' then 'confirmable_shift' when 'C' then 'cancelled_shift' end) as ActionType,
+    end) as DiaryClass,(case s.state when 'H' then 'deleteable_shift' when 'U' then 'deleteable_shift' when 'A' then 'deleteable_shift' when 'P' then (if isnull(s.tempconfirmed,0)=0 then 'confirmable_shift' endif) when 'C' then 'cancelled_shift' end) as ActionType,
     isnull(company.name,tempshiftunavailablereason.name) as Description,
     (if s.state = 'P' then 'Provisional'
     else ''
