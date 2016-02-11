@@ -39,13 +39,13 @@
 <WriteJSONObject> 
   <WriteJSONArray name="searchFields" >
       <SQLQuery>
-            <Call fieldtype="select" caption="Job Type" name="V_TempPerm" multiple="" class="required" sql="select 'T' as value,'Temp' as description union select 'P','Perm'">MakeFormField</Call>
-            <Call fieldtype="select" caption="Department" name="V_departmentid" multiple="" class="required" sql="select departmentid as value,name as description from department where searchable=1 and publishtoweb=1 order by sortorder">MakeFormField</Call>
-        <SQLSelect>select tagid,taglocation,description,tagtype from tag where taglocation like 'V%' and publiconweb=1 and tagtype in ('M','L') order by sortorder</SQLSelect>
+            <Call fieldtype="select" caption="Job Type" name="xpath_tempperm" multiple="" class="required" sql="select 'T' as value,'Temp' as description union select 'P','Perm'">MakeFormField</Call>
+            <Call fieldtype="select" caption="Department" name="xpath_departmentid" multiple="" class="required" sql="select departmentid as value,name as description from department where searchable=1 and publishtoweb=1 order by sortorder">MakeFormField</Call>
+        <SQLSelect>select tagid,taglocation,description,tagtype from tag where taglocation like 'V%' and publiconweb=1 and tagtype in ('M','L') and description != 'Vision Type' order by sortorder</SQLSelect>
         <ForEachRow>
           <If x1="{tagtype}" x2="L" ignorecase="YES">
             <SetVariable name="isMultiple" value="multiple" />
-            <SetVariable name="squareBrackets" value="" />
+            <SetVariable name="squareBrackets" value="[]" />
             <SetVariable name="xValue" value="tagchoiceid" />
           </If>
           <Else>
@@ -53,32 +53,26 @@
             <SetVariable name="squareBrackets" value="" />
             <SetVariable name="xValue" value="(if tagchoiceid='_' then '$NONE$' else tagchoiceid endif)" />
           </Else>
-          <Call fieldtype="select" caption="{description}" name="Q_{taglocation}_{tagid}{squareBrackets}" multiple="{isMultiple}" class="" sql="select {xValue} as value, description from tagchoice where charindex('%',tagchoiceid)=0 and tagid='{tagid}' and taglocation='{taglocation}' and subchoice=0 and isnull(donotpublishtoweb,0)=0 order by sortorder">MakeFormField</Call>
+            <Call fieldtype="select" caption="{description}" name="xpath_Q_{taglocation}_{tagid}{squareBrackets}" multiple="{isMultiple}" class="" sql="select {xValue} as value, description from tagchoice where charindex('%',tagchoiceid)=0 and tagid='{tagid}' and taglocation='{taglocation}' and subchoice=0 and isnull(donotpublishtoweb,0)=0 order by sortorder">MakeFormField</Call>
         </ForEachRow>
       </SQLQuery>
   </WriteJSONArray>
   
-    <SQLQuery>
-      <SQLSelect>select tagid,taglocation,description from tag where taglocation like 'V%' and publiconweb=1 and tagtype in ('M','L') order by sortorder</SQLSelect>
-      <ForEachRow>
-         <SetVariable name="safeCaption" value="{description}" regex="\W" replacement="_" />
-         <SetVariable name="VQ_FieldList" value="{VQ_FieldList},getquestanswer('{taglocation}','{tagid}',vacancy.vacancyid) as X_{safeCaption}" />
-      </ForEachRow>
-    </SQLQuery>
+  <Writeln></Writeln>
   
   <WriteJSONArray name="jobs" >
     <SQLQuery>
       <SQLSelect><![CDATA[select 
           Vacancy.vacancyID V_vacancyID, 
           (if isnull(Vacancy.Temp,0)=1 then 'T' else 'P' endif) as V_TempPerm,
-          (if isnull(Vacancy.Temp,0)=1 then 'Temp' else 'Perm' endif) as T_Job_Type,
-          vacancy.departmentID as V_departmentid, department.name as T_Department,
-          vacancy.position as T_Position, vacancy.startDate as T_Start_Date, vacancy.refcode as X_Reference, vacancy.othernotes as X_Description,
-          agencydetails.name as T_Branch, staff.name as X_Contact_Name, staff.email as X_Contact_Email{VQ_FieldList}
+          (if isnull(Vacancy.Temp,0)=1 then 'Temp' else 'Perm' endif) as T_jobType,
+          vacancy.departmentID as V_departmentid, department.name as T_department,
+          vacancy.position as T_position, vacancy.startDate as T_startDate, vacancy.refcode as X_ourRef, vacancy.othernotes as X_description,
+          agencydetails.name as T_branch, staff.name as X_contactName, staff.email as X_contactEmail{VQ_FieldList}
         from vacancy key join staff key join agencydetails,vacancy key join department
-        where vacancy.status='C' and trim(isnull(vacancy.position,'')) != '' and trim(isnull(X_Contact_Email,'')) != '' 
+        where vacancy.status='C' and trim(isnull(vacancy.position,'')) != '' and trim(isnull(X_contactemail,'')) != '' 
           and vacancy.startdate is not null and department.searchable=1 and department.publishtoweb=1
-        order by X_Reference ]]>
+        order by X_ourref ]]>
       </SQLSelect>
       <ForEachRow>
         <WriteJSONRow>

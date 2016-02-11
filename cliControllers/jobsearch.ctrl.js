@@ -7,7 +7,7 @@ angular.module('app')
       multiRow:true,
       notLoggedIn:true, // New candidate so obviously not yet logged in
       autoEdit:true, // Switch form straight to edit mode
-      doNotPreventNav:true,  // Stop edit mode from blocking switch to other views
+      doNotPreventNav:true, // Stop edit mode from blocking switch to other views
       saveCleanFields:true, // All fields sent, whether or not dirty
       savePrefix:'p',
       showResults:false,
