@@ -5,6 +5,7 @@ dump
 views
 node_modules
 daemon
+data
 
 config.js
 iqxWeb.zip

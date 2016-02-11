@@ -3,14 +3,15 @@ var _ = require('lodash')
 var config=require('../config')
 var apiTools=require('./apiTools')
 var fs = require('fs')
+var path = require('path')
 var chokidar = require('chokidar')
 
 // The API for job searching
 
 var webVacancies = {}
 var webVacanciesValid = false
-var WebVacanciesFile = './data/WebVacancies.json'
-
+//var WebVacanciesFile = './data/WebVacancies.json'
+var WebVacanciesFile = path.join(__dirname, '../data/WebVacancies.json')
 function loadWebVacancies() {
   console.log('Updating web vacancies from ' + WebVacanciesFile)
   fs.readFile(WebVacanciesFile, function (err, data) {
@@ -26,7 +27,7 @@ function loadWebVacancies() {
 	
 }
 
-chokidar.watch(WebVacanciesFile, {awaitWriteFinish:true}).on('change', function(event, path) {
+chokidar.watch(WebVacanciesFile, {awaitWriteFinish:{stabilityThreshold:5000,pollInterval:1000}}).on('change', function(event, path) {
   loadWebVacancies()
   })
 
@@ -43,12 +44,15 @@ router.post('/searchJobs',function (req,res) {
   var jobType = srch.xpath_tempperm
   var department = srch.xpath_departmentid
   var visionType = srch.xpath_Q_V_TYP
+  var awrRole = srch.xpath_Q_VED_AWR
+  var subject = srch.xpath_Q_VED_SUB
   
-  var jobs=webVacancies.jobs  
+  var jobs=webVacancies.jobs
 
   if(jobType!=undefined)
     jobs=_.filter(jobs,function(job){
       var r = job.TempPerm == jobType
+      var r = job.V_TempPerm == jobType
       return r
     })
   if(visionType!=undefined)
@@ -58,9 +62,25 @@ router.post('/searchJobs',function (req,res) {
     })
   if(department!=undefined)
     jobs=_.filter(jobs,function(job){
-      var r = job.departmentID == department
+      var r = job.V_departmentid == department
       return r
     })
+  if(awrRole!=undefined)
+    jobs=_.filter(jobs,function(job){
+      if(job.questions.length>0){
+        var r = job.questions[0].value == awrRole
+        return r
+      }
+    })
+  if(subject!=undefined)
+    jobs=_.filter(jobs,function(job){
+      if(job.questions.length>0){
+        var r = job.questions[0].value == subject
+        return r
+      }
+    })
+    
+    
     
   //Hint: use a _.every inside your _.filter to iterate the req.body params
     /*
