@@ -18,6 +18,10 @@ angular.module('app')
     $scope.applyRole=function(job) {
       var ref = job[4].value
       console.log(ref)
+/*      sh.formError=''
+      $scope.state.editing=true
+      $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits
+      sh.editing=true*/
     }
     $scope.emailRole=function(job) {
       var ref = job[4].value
