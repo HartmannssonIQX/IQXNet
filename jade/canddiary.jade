@@ -1,3 +1,5 @@
+include ./standard-blocks.jade
+
 .container-fluid
 
 
@@ -29,3 +31,7 @@
     on-delete-event-click="eventDeleted(calendarEvent)",
     cell-is-open="cellIsOpen"
     )
+    
+  +ModalForm('x123','Diary Edits')
+    +FormField('text','xName','Name',{'required':true})
+    +FormField('number','xAge','Age',{})

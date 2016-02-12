@@ -30,7 +30,13 @@ angular.module('app')
   }
     
     
-  $scope.eventClicked=function(evt) {alert('clicked')}
+  $scope.eventClicked=function(evt) {
+    var dat={xName:'Sid James',xAge:123}
+    FormSvc.modalForm($scope,'x123',dat)
+    .then(function() {
+      console.log(dat)
+    })
+  }
   $scope.eventEdited=function(evt) {alert('edit')}
   $scope.eventDeleted=function(evt) {alert('delete')}
     

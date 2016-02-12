@@ -1,5 +1,5 @@
 angular.module('app')
-.service('FormSvc', function (ApiSvc, $q, $timeout, $window, $location, ApplicationSvc, QuestionnaireSvc) {
+.service('FormSvc', function (ApiSvc, $q, $timeout, $window, $location, $uibModal, ApplicationSvc, QuestionnaireSvc) {
 	var svc=this
 
   svc.setOptions=function (scope,options) {
@@ -220,5 +220,37 @@ angular.module('app')
       })
     return rv
     }
+    
+  svc.modalForm=function(scope,id,data) {
+    var el=document.getElementById(id)
+    var html=angular.element(el).html()
+    return $uibModal.open({
+      template: html,
+      size: 'sm',
+      controller:'ModalFormCtrl',
+      scope:scope,
+      resolve: {
+        getData: function() {
+          return data
+          }
+         }
+      }).result
+    }
 
 })
+
+.controller('ModalFormCtrl', function ($scope, getData) {
+  $scope.theRecord=getData
+  $scope.formError=''
+  $scope.isEditing=true
+  $scope.isSubmitted=false
+  $scope.save=function () {
+    if ($scope.theForm.$valid) {
+      $scope.$close(true)
+    } else {
+      $scope.formError='There are invalid values' 
+      $scope.isSubmitted=true
+    }
+  }
+})
+

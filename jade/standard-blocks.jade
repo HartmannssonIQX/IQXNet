@@ -122,3 +122,19 @@ mixin FormButton(sCaption,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   .btn-group(role='group')&attributes(xAttrs)
     button.btn.btn-primary.btn-default(type='button')&attributes(oAttrs)= sCaption
+    
+mixin ModalForm(sID,sCaption,sSaveCaption,sCancelCaption)
+  - sSaveCaption = sSaveCaption || 'Save'
+  - sCancelCaption = sCancelCaption || 'Cancel'
+  .hidden(id=sID)
+    .modal-header
+      button.close(ng-click="$dismiss()")&attributes({'aria-hidden': 'true', 'type':'button'}) &times;
+      h3.modal-title= sCaption
+    .modal-body
+      .container
+        +MiniForm()
+          block
+    .modal-footer
+      .text-danger(ng-if='formError') {{ formError }}
+      button.btn.btn-primary(ng-click="save()")= sSaveCaption
+      button.btn.btn-warning(ng-click="$dismiss()")= sCancelCaption
