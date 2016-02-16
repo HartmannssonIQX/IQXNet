@@ -31,8 +31,8 @@ mixin MiniForm(xAttrs)
 mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8
@@ -43,8 +43,8 @@ mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
 mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8
@@ -57,8 +57,8 @@ mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
 mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8
@@ -73,20 +73,50 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
 mixin FormTimePopup(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
+    label.control-label.col-sm-4.spinner-label(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8
       uib-timepicker(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
+      
+mixin FormTimeRangePopup(sID1,sID2,sLabel1,sLabel2,oAttrs,xAttrs)
+  - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required"
+  - }
+  .form-group&attributes(xAttrs)
+    label.control-label.col-sm-4.spinner-label(for=sID1, ng-class="{requiredLabel:isEditing}")= sLabel1
+    .col-sm-8
+      uib-timepicker(id=sID1, name=sID1, ng-model='theRecord.'+sID1, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+      table(style='display:inline-table'): tbody 
+        tr: td
+        tr: td(style='padding:8px 5px;font-weight:bold;')= sLabel2
+      uib-timepicker(id=sID2, name=sID2, ng-model='theRecord.'+sID2, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+      .text-danger(ng-messages='theForm.'+sID1+'.$error', ng-if='isSubmitted || theForm.'+sID1+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
+      .text-danger(ng-messages='theForm.'+sID2+'.$error', ng-if='isSubmitted || theForm.'+sID2+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
+      
+mixin FormSpinner(sID,sLabel,oAttrs,xAttrs)
+  - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required"
+  - }
+  .form-group&attributes(xAttrs)
+    label.control-label.col-sm-4.spinner-label(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
+    .col-sm-8
+      spinner(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', style='display:inline-table')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
       
 mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8.checkbox
@@ -97,8 +127,8 @@ mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
 mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
-  -   xAttrs['data-required'] = "required";
-  - };
+  -   xAttrs['data-required'] = "required"
+  - }
   .form-group&attributes(xAttrs)
     label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
     .col-sm-8
