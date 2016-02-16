@@ -31,9 +31,9 @@ angular.module('app')
     
     
   $scope.eventClicked=function(evt) {
-    var dat={xName:'Sid James',xAge:123}
-    FormSvc.modalForm($scope,'x123',dat)
-    .then(function() {
+    $scope.myCaption='Hello kitty'
+    FormSvc.modalForm($scope,'x123',{xName:'Sidney James',xAge:123}) 
+    .then(function(dat) {
       console.log(dat)
     })
   }

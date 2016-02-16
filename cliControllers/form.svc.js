@@ -222,13 +222,14 @@ angular.module('app')
     }
     
   svc.modalForm=function(scope,id,data) {
-    var el=document.getElementById(id)
-    var html=angular.element(el).html()
+    var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
+    var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
+    data=data || {}                      // Initial form data may be specified or omitted
     return $uibModal.open({
       template: html,
-      size: 'sm',
+      size: 'lg',
       controller:'ModalFormCtrl',
-      scope:scope,
+      scope:scope,   // Specify the parent scope of the dialog's scope
       resolve: {
         getData: function() {
           return data
@@ -246,7 +247,7 @@ angular.module('app')
   $scope.isSubmitted=false
   $scope.save=function () {
     if ($scope.theForm.$valid) {
-      $scope.$close(true)
+      $scope.$close($scope.theRecord)
     } else {
       $scope.formError='There are invalid values' 
       $scope.isSubmitted=true

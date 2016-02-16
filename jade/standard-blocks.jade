@@ -70,6 +70,18 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
       
+mixin FormTimePopup(sID,sLabel,oAttrs,xAttrs)
+  - xAttrs = xAttrs || {}
+  - if (oAttrs.required) {
+  -   xAttrs['data-required'] = "required";
+  - };
+  .form-group&attributes(xAttrs)
+    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
+    .col-sm-8
+      uib-timepicker(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
+      .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
+        ng-messages-include(src='/views/error-messages.html')
+      
 mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   - xAttrs = xAttrs || {}
   - if (oAttrs.required) {
@@ -126,15 +138,14 @@ mixin FormButton(sCaption,oAttrs,xAttrs)
 mixin ModalForm(sID,sCaption,sSaveCaption,sCancelCaption)
   - sSaveCaption = sSaveCaption || 'Save'
   - sCancelCaption = sCancelCaption || 'Cancel'
-  .hidden(id=sID)
+  .hidden(id=sID, ng-non-bindable=true)
     .modal-header
       button.close(ng-click="$dismiss()")&attributes({'aria-hidden': 'true', 'type':'button'}) &times;
       h3.modal-title= sCaption
     .modal-body
-      .container
-        +MiniForm()
-          block
+      +MiniForm()
+        block
     .modal-footer
-      .text-danger(ng-if='formError') {{ formError }}
+      .text-danger {{ formError }}
       button.btn.btn-primary(ng-click="save()")= sSaveCaption
       button.btn.btn-warning(ng-click="$dismiss()")= sCancelCaption
