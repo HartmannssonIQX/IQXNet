@@ -6,7 +6,7 @@ table
           span.glyphicon.glyphicon-chevron-up
     tr
       td.form-group(ng-class="{'has-error': invalid}")
-        input.form-control.text-center(ng-style="{width:width+'px'}", type="text", ng-model="value", ng-change="update()", ng-readonly="::readonlyInput")
+        input.form-control.text-center(ng-style="{width:width+'px'}", type="text", ng-model="value", ng-change="update()", ng-readonly="::readonlyInput", ng-disabled="noEdit()")
     tr.text-center(ng-show="::showSpinners")
       td 
         a.btn.btn-link(ng-click="decrement()", ng-class="{disabled: noDecrement()}")

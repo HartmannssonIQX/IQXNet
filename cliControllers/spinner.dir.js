@@ -45,6 +45,13 @@ angular.module('app')
     })
   }
 
+  var disabled = false;
+  if ($attrs.ngDisabled) {
+    $scope.$parent.$watch($parse($attrs.ngDisabled), function(value) {
+      disabled = value;
+    })
+  }
+
   var min;
   $scope.$parent.$watch($parse($attrs.min), function(value) {
     min = isNaN(value) ? undefined : value;
@@ -64,13 +71,17 @@ angular.module('app')
     if (bCoerce && !v) {v=0}
     return v
   }
+  
+  $scope.noEdit = function () {
+    return disabled
+  }
 
   $scope.noIncrement = function() {
-    return (getValue(true) + step) > max 
+    return disabled || (getValue(true) + step) > max 
   }
 
   $scope.noDecrement = function() {
-    return (getValue(true) - step) < min
+    return disabled || (getValue(true) - step) < min
   }
 
   // Respond on mousewheel spin
@@ -85,7 +96,9 @@ angular.module('app')
     };
 
     inputEl.bind('mousewheel wheel', function(e) {
-      $scope.$apply( (isScrollingUp(e)) ? $scope.increment() : $scope.decrement() );
+      if (!disabled) {
+        $scope.$apply( (isScrollingUp(e)) ? $scope.increment() : $scope.decrement() );
+      }
       e.preventDefault();
     });
 
@@ -94,15 +107,17 @@ angular.module('app')
   // Respond on up/down arrowkeys
   this.setupArrowkeyEvents = function( inputEl ) {
     inputEl.bind('keydown', function(e) {
-      if ( e.which === 38 ) { // up
-        e.preventDefault();
-        $scope.increment();
-        $scope.$apply();
-      }
-      else if ( e.which === 40 ) { // down
-        e.preventDefault();
-        $scope.decrement();
-        $scope.$apply();
+      if (!disabled) {
+        if ( e.which === 38 ) { // up
+          e.preventDefault();
+          $scope.increment();
+          $scope.$apply();
+        }
+        else if ( e.which === 40 ) { // down
+          e.preventDefault();
+          $scope.decrement();
+          $scope.$apply();
+        }
       }
     });
 
