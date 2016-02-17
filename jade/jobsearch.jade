@@ -6,35 +6,34 @@ h2.textcentre Job Search
       label.control-label.col-sm-2(for='{{crit.name}}') {{crit.caption}}
       .col-sm-10
         select.form-control(id='{{crit.name}}', name='{{crit.name}}', ng-model='crit.value', ng-options='option.value as option.description for option in crit.options')
-.table-responsive
-  table.table.table-striped(ng-show='showResults')
-    thead
-      tr
-        th(ng-repeat="field in theResults[0] | filter:{type:'T'}") {{field.caption}}
-    tbody
-      tr.drillable(ng-repeat-start='job in theResults', ng-click='job.expanded = !job.expanded', ng-show='!job.expanded')
-        td(ng-repeat="field in job | filter:{type:'T'}") {{ field.value }}
-      tr(ng-repeat-end, ng-if='job.expanded', ng-show='job.expanded')
-        td(colspan=5 align='center')
-          table(style="width:50%;margin: 0 auto;").table.table-striped 
-            tbody
-              td 
-                p(ng-repeat="field in job") {{field.caption}}
-              td
-                p(ng-repeat="field in job") {{field.value}}
-            tfoot
-              tr
-                td(colspan=2 align='right') 
-                  button.btn.btn-sm.btn-primary(ng-click='applyRole(job)') Apply&nbsp;
-                    span.glyphicon.glyphicon-thumbs-up
-                  button.btn.btn-sm.btn-primary(ng-click='emailRole(job)') Email&nbsp;
-                    span.glyphicon.glyphicon-envelope
-                  button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') Hide Details&nbsp;
-                    span.glyphicon.glyphicon-menu-up
-
-    tfoot
-      tr
-        th(colspan=4) Total
-        th.textright {{numberOfResults}}
-      tr
-        th(colspan=5)
+  .table-responsive
+    table.table.table-striped(ng-show='showResults')
+      thead
+        tr
+          th(ng-repeat="field in theResults[0] | filter:{type:'T'}") {{field.caption}}
+      tbody
+        tr.drillable(ng-repeat-start='job in theResults', ng-click='job.expanded = !job.expanded', ng-show='!job.expanded')
+          td(ng-repeat="field in job | filter:{type:'T'}") {{ field.value }}
+        tr(ng-repeat-end, ng-if='job.expanded', ng-show='job.expanded')
+          td(colspan=5 align='center')
+            table(style="width:50%;margin: 0 auto;").table.table-striped 
+              tbody
+                tr(ng-repeat="field in job") 
+                  td {{field.caption}}
+                  td {{field.value}}
+              tfoot
+                tr
+                  td(colspan=2 align='right') 
+                    button.btn.btn-sm.btn-primary(ng-click='applyRole(job)', ng-if='isLoggedIn()') Apply&nbsp;
+                      span.glyphicon.glyphicon-thumbs-up
+                    button.btn.btn-sm.btn-primary
+                      span.glyphicon.glyphicon-envelope
+                        a(href='mailto:{{job[8].value}}?subject={{job[2].value}} (ref {{job[4].value}})') Email&nbsp;
+                    button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') Hide Details&nbsp;
+                      span.glyphicon.glyphicon-menu-up
+      tfoot
+        tr
+          th(colspan=4) Total
+          th.textright {{numberOfResults}}
+        tr
+          th(colspan=5)

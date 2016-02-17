@@ -24,6 +24,9 @@ angular.module('app').config(function($routeProvider) {
   .run( function($rootScope, $location, ApplicationSvc) {
     // Register listener to watch route changes
     $rootScope.$on('$routeChangeStart', function(event, next, current) {
+      if ( next.originalPath == '/jobsearch' ) { // Should work either logged in or not
+        return
+      }
       if ( next.originalPath == '/candregister' || next.originalPath == '/webReference') {
         ApplicationSvc.setLoggedOut()
         return

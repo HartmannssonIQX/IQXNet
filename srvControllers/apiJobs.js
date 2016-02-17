@@ -14,24 +14,31 @@ var webVacanciesValid = false
 var WebVacanciesFile = path.join(__dirname, '../data/WebVacancies.json')
 function loadWebVacancies() {
   console.log('Updating web vacancies from ' + WebVacanciesFile)
-  fs.readFile(WebVacanciesFile, function (err, data) {
-		if (err) {return console.log(err)}
-		webVacanciesValid=false
-		try {
-			webVacancies=JSON.parse(data) 
-			webVacanciesValid=true
-		} catch(err) {
-			console.log('Error parsing '+WebVacanciesFile+' '+err)
-		}
-	})
-	
+  fs.exists('data', function(exists){
+    if(!exists){
+      fs.mkdir('data')
+      fs.writeFile('data/WebVacancies.json', '{}')
+    }
+    else{
+      fs.readFile(WebVacanciesFile, function (err, data) {
+        if (err) {return console.log(err)}
+        webVacanciesValid=false
+        try {
+          webVacancies=JSON.parse(data) 
+          webVacanciesValid=true
+        } catch(err) {
+          console.log('Error parsing '+WebVacanciesFile+' '+err)
+        }
+      })
+    }
+  })
 }
 
 chokidar.watch(WebVacanciesFile, {awaitWriteFinish:{stabilityThreshold:5000,pollInterval:1000}}).on('change', function(event, path) {
   loadWebVacancies()
   })
 
-router.get('/searchFields',function (req,res,next) {   //what is next there for?
+router.get('/searchFields',function (req,res,next) {
 	if (webVacanciesValid){
 		res.send(apiTools.IQXSuccess(webVacancies.searchFields))
 	} else {
