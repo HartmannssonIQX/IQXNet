@@ -37,7 +37,9 @@ angular.module('app')
       console.log(dat)
     })
   }
-  $scope.eventEdited=function(evt) {alert('edit')}
+  $scope.eventEdited=function(evt) {
+    
+  }
   $scope.eventDeleted=function(evt) {alert('delete')}
     
   $scope.events=[]
@@ -55,7 +57,10 @@ angular.module('app')
                           startsAt:extractDateTime(row.DateFrom,row.TimeFrom || '00:00'),
                           endsAt:extractDateTime(row.DateTo,row.TimeTo || '23:59'),
                           editable:(row.ActionType=='deleteable_shift' || row.ActionType=='confirmable_shift'),
-                          deletable:(row.ActionType=='deleteable_shift' || row.ActionType=='cancelled_shift')})
+                          deletable:(row.ActionType=='deleteable_shift' || row.ActionType=='cancelled_shift' || row.ActionType=='confirmable_shift'),
+                          ActionType:row.ActionType,
+                          DiaryClass:row.DiaryClass
+                          })
       })
     })
     
