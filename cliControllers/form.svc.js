@@ -221,6 +221,22 @@ angular.module('app')
     return rv
     }
     
+  svc.modalChoose=function(caption,choices) {
+    var html='<div class="modal-header">'
+    html+='<h3 class="modal-title">'+caption+'</h3>'
+    html+='</div>'
+    html+='<div class="modal-body">'
+    angular.forEach(choices, function(choice,ix) {
+      html+='<button ng-click="$close('+ix+')" class="btn btn-primary btn-block">'+choice+'</button>'
+      })
+    html+='</div>'
+    return $uibModal.open({
+      template: html,
+      size: 'sm',
+      backdrop: 'static'
+      }).result
+    }
+    
   svc.modalForm=function(scope,id,data) {
     var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
     var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
@@ -228,6 +244,7 @@ angular.module('app')
     return $uibModal.open({
       template: html,
       size: 'lg',
+      backdrop: 'static',
       controller:'ModalFormCtrl',
       scope:scope,   // Specify the parent scope of the dialog's scope
       resolve: {
@@ -235,6 +252,17 @@ angular.module('app')
           return data
           }
          }
+      }).result
+    }
+
+  svc.modalInfo=function(scope,id,size) {
+    var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
+    var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
+    return $uibModal.open({
+      template: html,
+      size: size || 'lg',
+      backdrop: 'static',
+      scope:scope   // Specify the parent scope of the dialog's scope
       }).result
     }
 

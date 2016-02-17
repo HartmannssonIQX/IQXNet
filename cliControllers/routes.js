@@ -44,7 +44,7 @@ angular.module('app').config(function($routeProvider) {
     $rootScope.$on('$locationChangeStart', function(event) {
       if ( ApplicationSvc.isEditing && ApplicationSvc.preventNavIfEditing ) {
         event.preventDefault()
-        alert('Please first save or cancel your edits')
+        ApplicationSvc.showMessage('Attention','Please first Save or Cancel your edits')
         }
       })
   })

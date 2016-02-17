@@ -170,7 +170,6 @@ mixin ModalForm(sID,sCaption,sSaveCaption,sCancelCaption)
   - sCancelCaption = sCancelCaption || 'Cancel'
   .hidden(id=sID, ng-non-bindable=true)
     .modal-header
-      button.close(ng-click="$dismiss()")&attributes({'aria-hidden': 'true', 'type':'button'}) &times;
       h3.modal-title= sCaption
     .modal-body
       +MiniForm()
@@ -179,3 +178,11 @@ mixin ModalForm(sID,sCaption,sSaveCaption,sCancelCaption)
       .text-danger {{ formError }}
       button.btn.btn-primary(ng-click="save()")= sSaveCaption
       button.btn.btn-warning(ng-click="$dismiss()")= sCancelCaption
+      
+mixin ModalInfo(sID,sCaption)
+  .hidden(id=sID, ng-non-bindable=true)
+    .modal-header
+      h3.modal-title= sCaption
+    .modal-body
+      block
+
