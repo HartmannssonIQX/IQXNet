@@ -5,13 +5,17 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
   head
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    style(type="text/css")
+      | [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      | display: none !important;
+      | }
     link(rel='stylesheet', href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css')
     link(rel='stylesheet', href='/lib/angular-bootstrap-calendar.min.css')
     link(rel='stylesheet', href='/theme.css')
     link(rel='stylesheet', href='/app.css')
     link(rel='stylesheet', href='/print.css')
-    title {{params.browserTitle}}
-  body
+    title(ng-bind-template="{{params.browserTitle}}")
+  body(ng-cloak='true')
     //- Blank navigation for when not logged in as it shows nothing otherwise :(
     +nav()
 
