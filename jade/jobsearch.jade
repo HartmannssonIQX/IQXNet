@@ -23,13 +23,17 @@ h2.textcentre Job Search
                   td {{field.value}}
               tfoot
                 tr
-                  td(colspan=2 align='right') 
-                    button.btn.btn-sm.btn-primary(ng-click='applyRole(job)', ng-if='isLoggedIn()') Apply&nbsp;
-                      span.glyphicon.glyphicon-thumbs-up
-                    button.btn.btn-sm.btn-primary
+                  td(align='left') 
+                    button.btn.btn-sm.btn-primary(ng-click='applyRole(job)', ng-if='isLoggedIn()') 
+                      span.glyphicon.glyphicon-thumbs-up 
+                      | &nbsp;Apply&nbsp;
+                    | &nbsp;
+                    a(class='btn btn-sm btn-primary' href='mailto:{{job[8].value}}?subject={{job[2].value}} (ref {{job[4].value}})')
                       span.glyphicon.glyphicon-envelope
-                        a(href='mailto:{{job[8].value}}?subject={{job[2].value}} (ref {{job[4].value}})') Email&nbsp;
-                    button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') Hide Details&nbsp;
+                      | &nbsp;Email&nbsp;
+                  td(align='right') 
+                    button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') 
+                      | Hide Details&nbsp;
                       span.glyphicon.glyphicon-menu-up
       tfoot
         tr
