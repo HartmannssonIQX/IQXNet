@@ -1,4 +1,12 @@
-create PROCEDURE pears."NetDefineProcs"( in "pWebUserID" char(20), in "pSearchTerm" long varchar ) 
+create PROCEDURE pears."NetDefineProcs"
+/* DOC
+Created: 24-09-2015
+Updated: 19-02-2016
+Details: Fetches the procedures and generates the information for them
+Author: Gareth
+Version: 1.1
+*/
+( in "pWebUserID" char(20), in "pSearchTerm" long varchar ) 
 result( "proccessName" long varchar, "Doc" long varchar, "paramName" long varchar,"paramIO" long varchar,"paramDefault" long varchar,"paramType" long varchar ) 
 -- procccessName - Name of the procedure
 -- paramName - Name of the parameter (both inputs and outputs listed)
