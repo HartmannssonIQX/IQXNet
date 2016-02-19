@@ -1,13 +1,23 @@
 .container
 	.jumbotron
-		h1 Search Help
+		h1 Search API Help
 		div
-			input(type='text', ng-model='enteredValue')
-			br
-			button(type='button', ng-click='findValue(enteredValue)') Search
-			br
-			h3 Results
-			table.table
+			input(type='text', ng-model='enteredValue') 
+			button(type='submit', ng-click='findValue(enteredValue)') Search
+			p 
+				| To add your own documentation add the following anywhere in your procedure.
+				br
+				pre
+					b /* DOC
+					br
+					| &lt;&lt;YOUR DOCUMENTATION&gt;&gt;
+					br
+					b */
+
+	div.results(ng-show="results.length > 0")
+		h3 API Help
+		.table-responsive
+			table.table.table-striped
 				thead
 					tr
 						th Procedure
@@ -15,6 +25,7 @@
 				tbody
 					tr(ng-repeat='proc in results')
 						td {{ proc.name }}
+							p.helpDocumentation {{ proc.Doc }}
 						td 
 							table.table
 								thead
@@ -30,3 +41,8 @@
 										td {{ param.output }}
 										td {{ param.default }}
 
+	div.error(ng-show="results.length == 0")
+		.alert.alert-danger.ng-binding(role='alert')
+			span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+			span.sr-only Sorry 
+			| Sorry, no procedures match this search term.

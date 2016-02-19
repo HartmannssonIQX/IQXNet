@@ -9,45 +9,24 @@ angular.module('app')
     $scope.JsonProcs = ""
 
     $scope.findValue = function(enteredValue) {
-        // Empty the List for a new submit  
-        // console.clear()
-        // $scope.results.length = 0
-        $scope.searchHelp(enteredValue)
+        $scope.fetchHelpProcs(enteredValue)
+        .then(function() {
+            $scope.pushResults()
+        })
     }
 
-    $scope.searchHelp = function(searchTerm) {
-        angular.forEach($scope.results, function(value, key) {
-            angular.forEach(value, function (v, k){
-                if (!value.name.toLowerCase().indexOf(searchTerm.toLowerCase())) {
-                    console.log(value.name)
-                }
-            })
-
-            // if (!key.toLowerCase().indexOf(searchTerm.toLowerCase())) {
-
-            //     $scope.results.push({
-            //         Proccess_Name: key, 
-            //         Parameters: $scope.procs[key]["paramNames"][0],
-            //         Param_Types: $scope.procs[key]["paramType"][0],
-            //         paramIO: $scope.procs[key]["paramIO"][0],
-            //         paramDefault: $scope.procs[key]["paramDefault"][0]
-            //     })
-            // }
-        })
-    }  
-
-    $scope.fetchHelpProcs=function() {
+    $scope.fetchHelpProcs=function(searchTerm) {
+        $scope.results.length = 0
+        searchTerm = searchTerm || '';
         return $scope.fetch({
-            fetchAPI:'callresult_/NetDefineProcs', 
+            fetchAPI:'callresult_/NetDefineProcs?pSearchTerm='+searchTerm, 
             multiRow:true,
             fetchTarget:'helpProcs',
             notLoggedIn:true
         })
     }
 
-    $scope.fetchHelpProcs() // fetch help
-
-    .then(function() {
+    $scope.pushResults=function(){
         angular.forEach($scope.helpProcs, function(buildObject, key) {
           var paramNames = buildObject.paramName.split(',')
           var paramIO = buildObject.paramIO.split(',')
@@ -64,7 +43,12 @@ angular.module('app')
                 })
             }
           }) 
-          $scope.results.push({name:buildObject.proccessName,params:ar})   
+          $scope.results.push({name:buildObject.proccessName,Doc:buildObject.Doc,params:ar})   
         })
+    }
+
+    $scope.fetchHelpProcs() // fetch help
+    .then(function() {
+        $scope.pushResults()
     })
 });

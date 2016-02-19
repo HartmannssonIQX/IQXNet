@@ -1,5 +1,5 @@
-ALTER PROCEDURE "pears"."NetDefineProcs"( in "pWebUserID" char(20) ) 
-result( "proccessName" long varchar,"paramName" long varchar,"paramIO" long varchar,"paramDefault" long varchar,"paramType" long varchar ) 
+create PROCEDURE pears."NetDefineProcs"( in "pWebUserID" char(20), in "pSearchTerm" long varchar ) 
+result( "proccessName" long varchar, "Doc" long varchar, "paramName" long varchar,"paramIO" long varchar,"paramDefault" long varchar,"paramType" long varchar ) 
 -- procccessName - Name of the procedure
 -- paramName - Name of the parameter (both inputs and outputs listed)
 -- paramIO - Determines if the paramater is an input or output (0=IN | 1-OUT)
@@ -19,6 +19,7 @@ begin
   --    ORDER BY 
   --        proc_name, parm_type, parm_id
   select "proc_name" as "proccessName",
+    (SELECT substr(source, charindex('/* DOC', source)+6, charindex('*/', source) - charindex('/* DOC', source)-6 ) FROM "sys"."sysprocedure" where "proc_name" = "proccessName" AND charindex('/* DOC', source) > 0) as "Doc",
     "LIST"("parm_name" order by "parm_type" asc,"parm_id" asc) as "paramName",
     "LIST"("parm_type" order by "parm_type" asc,"parm_id" asc) as "paramIO",
     "LIST"("isnull"("default",'null') order by "parm_type" asc,"parm_id" asc) as "paramDefault",
@@ -27,7 +28,7 @@ begin
   -- Below code requires sybase 16 - temporary version 11 friendly version above
   --  "LIST"("isnull"("base_type_str",'null') order by "parm_type" asc,"parm_id" asc) as "paramType"
   --  from "sys"."sysprocedure" as "pr" key join "SYS"."SYSPROCPARM" as "pa" --where pr.proc_name = o.proc_name   
-    where "proc_name" like 'net%'
+    where "proc_name" like 'net%' AND "proc_name" like '%' + pSearchTerm + '%'
     group by "proc_name"
     order by 1 asc
 end
