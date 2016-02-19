@@ -1,5 +1,5 @@
 angular.module('app')
-.controller('HelpCtrl', function ($scope, $location, $routeParams, $q, FormSvc, ApplicationSvc) {
+.controller('APIHelpCtrl', function ($scope, $location, $routeParams, $q, FormSvc, ApplicationSvc) {
     
     FormSvc.setOptions($scope)
     $scope.MyData = ""
