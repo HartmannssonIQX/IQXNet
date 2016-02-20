@@ -34,8 +34,8 @@ mixin FormField(sType,sID,sLabel,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       input.form-control(type=sType, id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
@@ -46,8 +46,8 @@ mixin FormSelect(sID,sLabel,aChoices,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       select.form-control(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
         each item in aChoices
           option(value=item.Value)= item.Descrip
@@ -60,8 +60,8 @@ mixin FormDatePopup(sID,sLabel,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       p.input-group
         input.form-control(type='text', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', uib-datepicker-popup='{{dateFormat}}', is-open='dateIsOpen.'+sID, datepicker-options='dateOptions')&attributes(oAttrs)
         span.input-group-btn
@@ -76,8 +76,8 @@ mixin FormTimePopup(sID,sLabel,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4.spinner-label(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label.spinner-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       uib-timepicker(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
@@ -88,8 +88,8 @@ mixin FormTimeRangePopup(sID1,sID2,sLabel1,sLabel2,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4.spinner-label(for=sID1, ng-class="{requiredLabel:isEditing}")= sLabel1
-    .col-sm-8
+    label.control-label.spinner-label(for=sID1, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel1
+    div(ng-class="classes.data")
       uib-timepicker(id=sID1, name=sID1, ng-model='theRecord.'+sID1, ng-disabled='!isEditing', minute-step='5', show-meridian='false', style='display:inline-table')&attributes(oAttrs)
       table(style='display:inline-table'): tbody 
         tr: td
@@ -106,8 +106,8 @@ mixin FormSpinner(sID,sLabel,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4.spinner-label(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label.spinner-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       spinner(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', style='display:inline-table')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
@@ -118,8 +118,8 @@ mixin FormCheckbox(sID,sLabel,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8.checkbox
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    .checkbox(ng-class="classes.data")
       input.form-control(type='checkbox', id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
@@ -130,16 +130,16 @@ mixin FormTextArea(sID,sLabel,nRows,oAttrs,xAttrs)
   -   xAttrs['data-required'] = "required"
   - }
   .form-group&attributes(xAttrs)
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       textarea.form-control(id=sID, name=sID, rows=nRows, ng-model='theRecord.'+sID, ng-disabled='!isEditing')&attributes(oAttrs)
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages.html')
     
 mixin FormFile(sID,sLabel,oAttrs)
   .form-group
-    label.control-label.col-sm-4(for=sID, ng-class="{requiredLabel:isEditing}")= sLabel
-    .col-sm-8
+    label.control-label(for=sID, ng-class="[classes.label,{requiredLabel:isEditing}]")= sLabel
+    div(ng-class="classes.data")
       .form-control.btn.btn-success.btn-default(id=sID, name=sID, ng-model='theRecord.'+sID, ng-disabled='!isEditing', ngf-select='uploadSelect($files, $file, $event)', ngf-drop='uploadSelect($files, $file, $event)')&attributes(oAttrs) {{uploadFileName()}}
       .text-danger(ng-messages='theForm.'+sID+'.$error', ng-if='isSubmitted || theForm.'+sID+'.$touched')
         ng-messages-include(src='/views/error-messages-upload.html')

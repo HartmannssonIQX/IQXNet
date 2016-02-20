@@ -161,7 +161,7 @@ include ./standard-blocks.jade
   //- Additional data - Their Ref., Questionnaire etc. -------------------------
   +Container({'ng-class':"{'form-horizontal':true}",'ng-show':'state.calculated','ng-form':'theForm'})
     +FormField('text','theirref','Reference',{'ng-required':'theRecord.theirrefrequired','class':'uppercase'},{'ng-show':'state.canEditTheirRef'})
-    iqx-questionnaire(questions='tags')
+    iqx-questionnaire(questions='tags', classes='classes')
 
   
   //- Footer - error message and buttons

@@ -28,6 +28,8 @@ angular.module('app')
     scope.totalItems=1000000 // May be adjusted downwards when we know how many there are
     scope.itemsPerPage=scope.FormSvcOptions.sliceSize
     
+    scope.classes={label:'col-sm-4', data:'col-sm-8'} // Bootstrap widths of form label and data
+    
     // Date picker setup
     scope.dateFormat='dd/MM/yyyy'  
     scope.dateOptions={}
@@ -244,10 +246,11 @@ angular.module('app')
       }).result
     }
     
-  svc.modalForm=function(scope,id,data,size) {
+  svc.modalForm=function(scope,id,data,size,classes) {
     var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
     var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
     data=data || {}                      // Initial form data may be specified or omitted
+    classes=classes || scope.classes
     return $uibModal.open({
       template: html,
       size: size || 'sm',
@@ -256,7 +259,7 @@ angular.module('app')
       scope:scope,   // Specify the parent scope of the dialog's scope
       resolve: {
         getData: function() {
-          return data
+          return {theRecord:data, classes:classes}
           }
          }
       }).result
@@ -277,7 +280,8 @@ angular.module('app')
 })
 
 .controller('ModalFormCtrl', function ($scope, getData) {
-  $scope.theRecord=getData
+  $scope.theRecord=getData.theRecord
+  $scope.classes=getData.classes
   $scope.formError=''
   $scope.isEditing=true
   $scope.isSubmitted=false
