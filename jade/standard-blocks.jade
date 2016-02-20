@@ -149,6 +149,11 @@ mixin FormFileUpload
     .btn-group(role='group')
       button.btn.btn-primary.btn-default(type='button', ng-click='uploadExecute()') Upload
       
+mixin FormQuestionnaire(tags, classes)
+  - xTags = tags || 'tags'
+  - xClasses = classes || 'classes'
+  iqx-questionnaire(questions=xTags, classes=xClasses)
+      
 mixin Pager
   uib-pager(total-items='totalItems', items-per-page='itemsPerPage', ng-model='currentPage', ng-change='fetch()', align='false')
   

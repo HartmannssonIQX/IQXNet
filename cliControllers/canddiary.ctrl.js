@@ -93,7 +93,7 @@ angular.module('app')
       if (sItem=='Unavailable') {sItem='Unavailability'}
       $scope.xCaption=sItem
       var data={xDate:evt.startsAt,xTimeFrom:evt.startsAt,xTimeTo:evt.endsAt,xAllDay:evt.AllDay}
-      FormSvc.modalForm($scope,'diaryAvailEdit',data,'md')
+      FormSvc.modalForm($scope,'diaryAvailEdit',data,'md',{label:'col-sm-3', data:'col-sm-9'})
       .then(function(data) {
         var pdatefrom=moment(data.xDate).format('DD/MM/YYYY')
         var ptimefrom=moment(data.xTimeFrom).format('HH:mm')

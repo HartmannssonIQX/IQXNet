@@ -17,6 +17,8 @@ angular.module('app')
         postVar:'qanswers'
         }
       })
+      
+  $scope.classes={label:'col-sm-4', data:'col-sm-6'}
   
   $scope.fetchTimesheet=function() { // Fetch the timesheet header
     return $scope.fetch()  // The primary fetch using the scope options above
