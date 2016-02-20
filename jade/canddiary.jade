@@ -11,14 +11,14 @@ include ./standard-blocks.jade
         button.btn.btn-default(mwl-date-modifier, date="calendarDate", set-to-today) Today
         button.btn.btn-primary(mwl-date-modifier, date="calendarDate", increment="calendarView") Next
     br.visible-xs
-    .col-sm-4.text-center
+    .col-sm-5.text-center
       .btn-group
         label.btn.btn-primary(ng-model="calendarView", uib-btn-radio!="'year'") Year 
         label.btn.btn-primary(ng-model="calendarView", uib-btn-radio!="'month'") Month
         label.btn.btn-primary(ng-model="calendarView", uib-btn-radio!="'week'") Week
         label.btn.btn-primary(ng-model="calendarView", uib-btn-radio!="'day'") Day
     br.visible-xs
-    .col-sm-4.text-center
+    .col-sm-3.text-center
       .btn-group
         button.btn.btn-primary(ng-click="enterAvailability()") Enter Availability
 
@@ -36,11 +36,17 @@ include ./standard-blocks.jade
     cell-is-open="cellIsOpen"
     )
     
-  +ModalForm('x123','{{myCaption}}')
-    +FormField('text','xName','Name',{'required':true})
-    +FormField('number','xAge','Age',{})
-    +FormDatePopup('xDate','Date of Birth',{})
-    +FormTimeRangePopup('xTime1','xTime2','Time Range','to',{'required':true})
+  +ModalForm('diaryAvailEdit','{{xCaption}}')
+    +FormDatePopup('xDate','Date',{'required':true})
+    +FormCheckbox('xAllDay','All Day',{})
+    +FormTimeRangePopup('xTimeFrom','xTimeTo','From','to',{},{"ng-hide":"theRecord.xAllDay"})
+    
+  +ModalInfo('x456','Info')
+    h5 {{data.x}}
+    h5 {{data.y}}
+    button.btn.btn-primary.btn-block(ng-click="$close(true)") Close
+    
+    
     
     
     

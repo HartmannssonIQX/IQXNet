@@ -221,29 +221,36 @@ angular.module('app')
     return rv
     }
     
-  svc.modalChoose=function(caption,choices) {
+  svc.modalChoose=function(caption,xHtml,choices,size) {
     var html='<div class="modal-header">'
     html+='<h3 class="modal-title">'+caption+'</h3>'
     html+='</div>'
-    html+='<div class="modal-body">'
+    html+='<div class="modal-body">'+xHtml
     angular.forEach(choices, function(choice,ix) {
-      html+='<button ng-click="$close('+ix+')" class="btn btn-primary btn-block">'+choice+'</button>'
+      var xclass='btn btn-block btn-'
+      if (angular.isString(choice)){
+        xclass+='primary'
+      } else {
+        xclass+=choice.type
+        choice=choice.description
+      }
+      html+='<button ng-click="$close('+ix+')" class="'+xclass+'">'+choice+'</button>'
       })
     html+='</div>'
     return $uibModal.open({
       template: html,
-      size: 'sm',
+      size: size || 'sm',
       backdrop: 'static'
       }).result
     }
     
-  svc.modalForm=function(scope,id,data) {
+  svc.modalForm=function(scope,id,data,size) {
     var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
     var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
     data=data || {}                      // Initial form data may be specified or omitted
     return $uibModal.open({
       template: html,
-      size: 'lg',
+      size: size || 'sm',
       backdrop: 'static',
       controller:'ModalFormCtrl',
       scope:scope,   // Specify the parent scope of the dialog's scope
@@ -255,13 +262,14 @@ angular.module('app')
       }).result
     }
 
-  svc.modalInfo=function(scope,id,size) {
+  svc.modalInfo=function(scope,id,data,size) {
     var el=document.getElementById(id)   // The form content is defined in a hidden div with the specified id
     var html=angular.element(el).html()  // The div must have the ng-non-bindable directive
     return $uibModal.open({
       template: html,
-      size: size || 'lg',
+      size: size || 'sm',
       backdrop: 'static',
+      controller: function($scope) {$scope.data=data},
       scope:scope   // Specify the parent scope of the dialog's scope
       }).result
     }
