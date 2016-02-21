@@ -93,19 +93,24 @@ angular.module('app')
       if (sItem=='Unavailable') {sItem='Unavailability'}
       $scope.xCaption=sItem
       var data={xDate:evt.startsAt,xTimeFrom:evt.startsAt,xTimeTo:evt.endsAt,xAllDay:evt.AllDay}
+      var newData={}
       FormSvc.modalForm($scope,'diaryAvailEdit',data,'md',{label:'col-sm-3', data:'col-sm-9'})
       .then(function(data) {
-        var pdatefrom=moment(data.xDate).format('DD/MM/YYYY')
-        var ptimefrom=moment(data.xTimeFrom).format('HH:mm')
-        var ptimeto = moment(data.xTimeTo).format('HH:mm')
+        newData.pdatefrom=moment(data.xDate).format('DD/MM/YYYY')
+        newData.pdateto=newData.pdatefrom
+        newData.ptimefrom=moment(data.xTimeFrom).format('HH:mm')
+        newData.ptimeto = moment(data.xTimeTo).format('HH:mm')
         if (data.xAllDay) {
-          ptimefrom=''
-          ptimeto=''
-          }
-        //return $scope.exec('call/NetCandidateDiaryAdd',{IDCode:evt.DiaryID.substring(6),pdatefrom:pdatefrom,ptimefrom:ptimefrom,ptimeto:ptimeto})
+          newData.ptimefrom=''
+          newData.ptimeto=''
+        } else if (newData.ptimeto <= newData.ptimefrom) {
+            newData.pdateto=moment(data.xDate).add(1,'d').format('DD/MM/YYYY')
+        }
+        return $scope.exec('call/NetCandidateDiaryAdd',{IDCode:evt.DiaryID.substring(6),pdatefrom:newData.pdatefrom,ptimefrom:newData.ptimefrom,ptimeto:newData.ptimeto})
         })
       .then(function() {
-        $scope.deleteEvent(evt.DiaryID)
+        evt.startsAt=extractDateTime(newData.pdatefrom,newData.ptimefrom || '00:00')
+        evt.endsAt=extractDateTime(newData.pdateto,newData.ptimeto || '23:59')
         })
       .catch(function (err) {
         if (err) {ApplicationSvc.showMessage('Error',err,true)}

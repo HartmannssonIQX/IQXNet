@@ -18,7 +18,7 @@ angular.module('app')
         }
       })
       
-  $scope.classes={label:'col-sm-4', data:'col-sm-6'}
+  $scope.classes={label:'col-sm-4', data:'col-sm-6'}  // Deliberatly not adding to 12 so as to indent from right margin
   
   $scope.fetchTimesheet=function() { // Fetch the timesheet header
     return $scope.fetch()  // The primary fetch using the scope options above
