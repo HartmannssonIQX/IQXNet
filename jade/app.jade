@@ -40,6 +40,7 @@ html(ng-app='app', ng-controller='ApplicationCtrl')
     +nav({"ng-if":'userClass()==\'OWNER\''})
       +nav_item( "/#/serverstats" ) Stats
       +nav_item( "/#/apiprocs", {"ng-if":'userHasRight(\'APIDESIGN\') && isSwitchedOn(\'APIDESIGN\')'} ) API
+      +nav_item( "/#/apihelp", {"ng-if":'userHasRight(\'APIDESIGN\') && isSwitchedOn(\'APIDESIGN\')'} ) API Help
       +nav_item( "/#/jobsearch", {"ng-if":'userHasRight(\'TESTONLY\')'} ) Jobs
       +nav_item( "/#/test", {"ng-if":'userHasRight(\'TESTONLY\')'} ) Test
 
