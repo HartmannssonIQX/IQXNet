@@ -15,23 +15,32 @@ angular.module('app')
       saveCleanFields:true, // All fields sent, whether or not dirty
       savePrefix:'p',
       showResults:false,
-      theResults:{},
-      numberOfResults:0      // why is showResults undefined even though it is set to 0?
+      theResults:{}
       })
-        
+
     $scope.applyRole=function(job) {
-      var ref = job[4].value
-      console.log(ref)
-/*      sh.formError=''
-      $scope.state.editing=true
-      $scope.safeShift=angular.copy(sh)  // Make safe copy in case of cancel edits
-      sh.editing=true*/
+      var pVacancyId = job[4].value
+      console.dir(ApplicationSvc)
+      console.dir(ApplicationSvc.currentUser)
+      //var pPersonId
+      console.log(pVacancyId)
+      //$scope.exec('jobs/apply',pVacancyId)
+//      var saveData = {}
+      var saveData = {pPersonID:null,pVacancyId:pVacancyId}
+//      var saveData = ["Saab", "Volvo"]
+      
+      console.log('foo')
+      return $scope.exec('call/NetShortlistCandidate',saveData)
+      
     }
 
     $scope.saveButtonCaption='Search'
     
     $scope.update=function() {
       var postData={}
+      console.dir(ApplicationSvc)
+      console.dir(ApplicationSvc.currentUser)
+      console.dir(ApplicationSvc.currentUser.UserName)
       angular.forEach($scope.theRecords, function(val) {
         postData[val.name]=val.value
         //console.log(val.value)
@@ -40,8 +49,7 @@ angular.module('app')
       .then(function(jobs) {
         //console.log(jobs)
         $scope.theResults=jobs.IQXResult.Row
-        $scope.numberOfResults=$scope.theResults.length
-        $scope.showResults=($scope.numberOfResults>0)
+        $scope.showResults=($scope.theResults.length>0)
       })
       return postData
     }

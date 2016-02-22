@@ -75,6 +75,14 @@ router.post('/searchJobs',function (req,res) {
 })
 
 
+router.post('/apply',function (req,res) {
+   
+    console.log('/apply')
+//    console.log(req)
+//    console.log(res)
+})
+
+
 loadWebVacancies()
 
 module.exports=router
