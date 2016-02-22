@@ -54,17 +54,31 @@ angular.module('app')
     svc.isLoggedIn=false
     }
     
-  svc.messageDialog=function (caption, message, okText, cancelText, bSucceedIfCancel) {
+  svc.messageDialog=function (caption, message, okText, cancelText, bSucceedIfCancel, bDanger) {
     return $uibModal.open({
       templateUrl: 'views/modalDialog.html',
       size: 'sm',
-      controller:'ModalCtrl',
+      backdrop: 'static',
+      controller: 'ModalCtrl',
+      windowClass: bDanger?'text-danger':'',
       resolve: {
         getModalVars: function() {
           return {title:caption,text:message,yesText:okText,noText:cancelText,succeedIfCancel:bSucceedIfCancel}
           }
          }
       }).result
+    }
+    
+  svc.showMessage=function(caption,message,bError) {
+    return svc.messageDialog(caption,message,'Ok','',false,bError)
+    }
+  
+  svc.queryMessage=function(caption,message,okCancel) {
+    if (okCancel) {
+      return svc.messageDialog(caption,message,'Ok','Cancel')
+    } else {
+      return svc.messageDialog(caption,message,'Yes','No')
+    }
     }
     
   svc.forceChangePassword=function() {

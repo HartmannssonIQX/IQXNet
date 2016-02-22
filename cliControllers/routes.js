@@ -19,7 +19,7 @@ angular.module('app').config(function($routeProvider) {
   .when('/serverstats',{controller:'ServerStatsCtrl',templateUrl:'/views/serverStats.html'})
   .when('/canddepartments',{controller:'CandDepartmentsCtrl',templateUrl:'/views/canddepartments.html'})
   .when('/canddepartment',{controller:'CandDepartmentCtrl',templateUrl:'/views/canddepartment.html'})
-  .when('/help',{controller:'HelpCtrl',templateUrl:'/views/help.html'})
+  .when('/apihelp',{controller:'APIHelpCtrl',templateUrl:'/views/apihelp.html'})
   })
   .run( function($rootScope, $location, ApplicationSvc) {
     // Register listener to watch route changes
@@ -47,7 +47,7 @@ angular.module('app').config(function($routeProvider) {
     $rootScope.$on('$locationChangeStart', function(event) {
       if ( ApplicationSvc.isEditing && ApplicationSvc.preventNavIfEditing ) {
         event.preventDefault()
-        alert('Please first save or cancel your edits')
+        ApplicationSvc.showMessage('Attention','Please first Save or Cancel your edits')
         }
       })
   })
