@@ -27,7 +27,7 @@ include ./standard-blocks.jade
 
     +FormField('text','Position','Position',{'ng-disabled':true, 'readonly':true})
     +FormField('text','PositionNotes','Notes',{'ng-disabled':true, 'readonly':true})
-    iqx-questionnaire(questions='tags')
+    +FormQuestionnaire
     +FormCheckbox('ReferenceConfirmationRequired','Would you like an email copy of this reference?',{})
     .mybottomspacer
     .mybottomspacer
