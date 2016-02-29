@@ -19,19 +19,12 @@ angular.module('app')
       })
 
     $scope.applyRole=function(job) {
-      var pVacancyId = job[4].value
+      var pVacancyId = job[4].value       //BMH is this safe?
       console.dir(ApplicationSvc)
       console.dir(ApplicationSvc.currentUser)
-      //var pPersonId
-      console.log(pVacancyId)
-      //$scope.exec('jobs/apply',pVacancyId)
-//      var saveData = {}
-      var saveData = {pPersonID:null,pVacancyId:pVacancyId}
-//      var saveData = ["Saab", "Volvo"]
+      var saveData = {pPersonID:'XX510413290920080203',pRefCode:pVacancyId} //BMH nomenclature!
       
-      console.log('foo')
-      return $scope.exec('call/NetShortlistCandidate',saveData)
-      
+      return $scope.exec('call/NetCandidateAddToShortlist',saveData)      
     }
 
     $scope.saveButtonCaption='Search'
@@ -42,12 +35,10 @@ angular.module('app')
       console.dir(ApplicationSvc.currentUser)
       console.dir(ApplicationSvc.currentUser.UserName)
       angular.forEach($scope.theRecords, function(val) {
-        postData[val.name]=val.value
-        //console.log(val.value)
+      postData[val.name]=val.value
       })
-      $scope.exec('jobs/searchJobs',postData)
+      $scope.exec('jobs/searchJobs',postData)    //use fetch
       .then(function(jobs) {
-        //console.log(jobs)
         $scope.theResults=jobs.IQXResult.Row
         $scope.showResults=($scope.theResults.length>0)
       })

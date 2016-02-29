@@ -11,33 +11,36 @@ h2.textcentre Job Search
       thead
         tr
           th(ng-repeat="field in theResults[0] | filter:{type:'T'}") {{field.caption}}
+          th(ng-repeat="field in theResults[0] | filter:{type:'K'}") {{field.caption}}
       tbody
         tr.drillable(ng-repeat-start='job in theResults', ng-click='job.expanded = !job.expanded', ng-show='!job.expanded')
           td(ng-repeat="field in job | filter:{type:'T'}") {{ field.value }}
+          td(ng-repeat="field in job | filter:{type:'K',applied:true}" align='center') 
+            span.glyphicon.glyphicon-ok-circle
+          td(ng-repeat="field in job | filter:{type:'K',applied:false}" align='center') 
         tr(ng-repeat-end, ng-if='job.expanded', ng-show='job.expanded')
-          td(colspan=5 align='center')
+          td(colspan=6 align='center')
             table(style="width:50%;margin: 0 auto;").table.table-striped 
               tbody
-                tr(ng-repeat="field in job") 
+                tr(ng-repeat="field in job | filter:{type:'!K'}") 
                   td {{field.caption}}
                   td {{field.value}}
-              tfoot
-                tr
+                tr(ng-repeat="field in job | filter:{type:'K'}") 
                   td(align='left') 
-                    button.btn.btn-sm.btn-primary(ng-click='applyRole(job)', ng-if='isLoggedIn()') 
+                    button.btn.btn-sm.btn-primary(ng-click='applyRole(job)', ng-if='isLoggedIn() && !field.applied') 
                       span.glyphicon.glyphicon-thumbs-up 
                       | &nbsp;Apply&nbsp;
                     | &nbsp;
-                    a(class='btn btn-sm btn-primary' href='mailto:{{job[8].value}}?subject={{job[2].value}} (ref {{job[4].value}})')
+                    a(class='btn btn-sm btn-primary' href='mailto:{{job[9].value}}?subject={{job[3].value}} (ref {{job[5].value}})')
                       span.glyphicon.glyphicon-envelope
                       | &nbsp;Email&nbsp;
                   td(align='right') 
                     button.btn.btn-sm.btn-primary(ng-click='job.expanded = !job.expanded') 
                       | Hide Details&nbsp;
                       span.glyphicon.glyphicon-menu-up
+              tfoot
+                tr
       tfoot
         tr
-          th(colspan=4) Total
+          th(colspan=5) Total
           th.textright {{theResults.length}}
-        tr
-          th(colspan=5)
