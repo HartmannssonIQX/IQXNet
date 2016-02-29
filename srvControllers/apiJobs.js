@@ -5,6 +5,7 @@ var apiTools=require('./apiTools')
 var fs = require('fs')
 var path = require('path')
 var chokidar = require('chokidar')
+var Q = require('q')
 
 // The API for job searching
 
@@ -46,8 +47,19 @@ router.get('/searchFields',function (req,res,next) {
 	}
 })
 
+function getAppliedJobs(req,res){  // Returns a PROMISE
+
+  if(req.headers.iqxauthuser!=undefined){
+    return ['XX18BNBH301120150002','XX0Q77VS180520120004','XX0S5FVS260920120000']
+  }else{
+    return []
+  }
+  
+}
+
 router.post('/searchJobs',function (req,res) {
-   
+  var alreadyApplied =  getAppliedJobs(req,res)
+
   var srchJobs=_.filter(webVacancies.jobs,function(job) {
     return _.every(req.body,function (xValue,xKey) {
       if (!xKey.match(/^Q/)) {
@@ -57,6 +69,9 @@ router.post('/searchJobs',function (req,res) {
       }
       })
     })
+
+    //feedback for applied (popup perhaps)
+  // Add VacancyID
   var resJobs=[]
   _.forEach(srchJobs,function(job){
     var resJob=[]
@@ -66,12 +81,24 @@ router.post('/searchJobs',function (req,res) {
                      value:val,
                      type:key.substring(0,1)})
       }
+      else if(key =='V_vacancyID' /* && isLoggedIn*/) {
+        resJob.push({caption:'Applied',
+                     vacancyID:key,
+                     value:val,
+                     type:'K',
+                     applied:alreadyApplied.indexOf(val)!=-1})
+      }
       })
     resJobs.push(resJob)
     })
 	res.send(apiTools.IQXSuccess(resJobs))
   
-//  console.log(srch)
+})
+
+
+router.post('/apply',function (req,res) {
+   
+    console.log('/apply')
 })
 
 
